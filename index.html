@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>선전·홍콩 5박 6일 — 인터랙티브 여행 일정표</title>
+<style>
+  :root {
+    --bg: #faf7f2;
+    --surface: #ffffff;
+    --surface-2: #f3efe8;
+    --ink: #2b2620;
+    --muted: #8a8073;
+    --faint: #b5ac9e;
+    --border: #e6e0d5;
+    --border-strong: #d4ccbc;
+    --accent-hk: #b3352c;      /* 홍콩 */
+    --accent-sz: #1f6e5a;      /* 선전 */
+    --accent-common: #9a6b2f;  /* 공통 */
+    --done: #1f6e5a;
+    --radius: 14px;
+    --shadow: 0 1px 2px rgba(43,38,32,.05), 0 8px 24px rgba(43,38,32,.06);
+    --font-head: 'Nanum Myeongjo', 'Nanum Gothic', serif;
+    --font-body: 'Nanum Gothic', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #201d19; --surface: #2a2620; --surface-2: #34302a;
+      --ink: #ece6dc; --muted: #a1968a; --faint: #6e655a;
+      --border: #3c372f; --border-strong: #4c463c;
+      --accent-hk: #e06a5f; --accent-sz: #5db69c; --accent-common: #d0a05c;
+      --done: #5db69c;
+      --shadow: 0 1px 2px rgba(0,0,0,.2), 0 8px 24px rgba(0,0,0,.25);
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: var(--font-body); font-size: 15px; line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    html { scroll-behavior: auto; }
+  }
+
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 20px 80px; }
+
+  /* ─── View switch (PC / Mobile) ─── */
+  .view-switch {
+    display: inline-flex; gap: 2px; padding: 3px; border-radius: 999px;
+    background: var(--surface-2); border: 1px solid var(--border);
+  }
+  .view-switch button {
+    border: 0; background: transparent; color: var(--muted); cursor: pointer;
+    font: inherit; font-size: 12px; font-weight: 700; padding: 6px 13px; border-radius: 999px;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .view-switch button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+  .view-switch button:focus-visible { outline: 2px solid var(--accent-sz); outline-offset: 2px; }
+
+  /* Mobile emulation frame: applied only when html[data-view="mobile"] */
+  html[data-view="mobile"] body {
+    background: var(--surface-2);
+  }
+  html[data-view="mobile"] .wrap {
+    max-width: 430px; padding: 0 0 64px; margin: 18px auto;
+    background: var(--bg); border-radius: 22px; overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08), 0 20px 44px rgba(0,0,0,.14);
+    border: 1px solid var(--border);
+  }
+  html[data-view="mobile"] .wrap > header,
+  html[data-view="mobile"] .wrap > nav.days,
+  html[data-view="mobile"] .wrap > main,
+  html[data-view="mobile"] .wrap > section.extra,
+  html[data-view="mobile"] .wrap > footer {
+    padding-left: 14px; padding-right: 14px;
+  }
+  html[data-view="mobile"] header { padding-top: 20px; }
+  html[data-view="mobile"] h1 { font-size: 21px; }
+  html[data-view="mobile"] .eyebrow { font-size: 10px; }
+  html[data-view="mobile"] .trip-meta { font-size: 12px; gap: 5px 12px; }
+  html[data-view="mobile"] .summary { grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 16px 0 4px; }
+  html[data-view="mobile"] .stat { padding: 10px 11px; }
+  html[data-view="mobile"] .stat .v { font-size: 14.5px; }
+  html[data-view="mobile"] .bookings { gap: 6px; }
+  html[data-view="mobile"] .chip { font-size: 11px; padding: 5px 10px; }
+  html[data-view="mobile"] .global-tools { margin-top: 10px; }
+  html[data-view="mobile"] .utility-btn, html[data-view="mobile"] .place-link {
+    padding: 8px 11px; font-size: 12px;
+  }
+  html[data-view="mobile"] nav.days {
+    position: sticky; margin: 14px 0 4px; padding: 10px 0;
+    left: 0; right: 0;
+  }
+  html[data-view="mobile"] .tab { padding: 7px 12px; min-height: 44px; }
+  html[data-view="mobile"] .tab .t { font-size: 13px; }
+  html[data-view="mobile"] .day-head { margin: 18px 0 4px; gap: 8px; }
+  html[data-view="mobile"] .day-head h2 { font-size: 19px; }
+  html[data-view="mobile"] .route { font-size: 12px; padding: 10px 12px; }
+  html[data-view="mobile"] .route-map iframe { height: 220px; }
+  /* timeline: stack time above card on mobile for width */
+  html[data-view="mobile"] .tl::before { left: 7px; }
+  html[data-view="mobile"] .slot { grid-template-columns: 1fr; gap: 4px 0; padding-left: 22px; position: relative; }
+  html[data-view="mobile"] .slot .time {
+    text-align: left; padding-top: 0; font-size: 12.5px;
+  }
+  html[data-view="mobile"] .slot::before {
+    content: ""; position: absolute; left: 3px; top: 6px; width: 9px; height: 9px;
+    border-radius: 50%; background: var(--border-strong); border: 2px solid var(--bg);
+  }
+  html[data-view="mobile"] .slot.current::before { background: var(--accent-hk); }
+  html[data-view="mobile"] .slot.next::before { background: var(--accent-sz); }
+  html[data-view="mobile"] .slot .card { padding: 11px 13px; }
+  html[data-view="mobile"] .title { font-size: 14px; }
+  html[data-view="mobile"] .desc, html[data-view="mobile"] .detail-copy { font-size: 12.5px; }
+  html[data-view="mobile"] .place-tools, html[data-view="mobile"] .badges { gap: 5px; }
+  html[data-view="mobile"] .badge { font-size: 10.5px; }
+  html[data-view="mobile"] .day-tools { justify-content: flex-start; margin: 4px 0 10px; }
+  html[data-view="mobile"] .grid2 { grid-template-columns: 1fr; gap: 12px; }
+  html[data-view="mobile"] .panel { padding: 14px 15px; }
+  html[data-view="mobile"] .emergency-grid { grid-template-columns: 1fr 1fr; }
+  html[data-view="mobile"] section.extra { margin-top: 30px; }
+  html[data-view="mobile"] section.extra h3 { font-size: 16.5px; }
+  @media (max-width: 480px) {
+    html[data-view="mobile"] .wrap { margin: 0 auto; border-radius: 0; box-shadow: none; border: 0; }
+  }
+
+  /* ─── Header ─── */
+  header { padding: 48px 0 8px; }
+  .eyebrow {
+    font-size: 12px; letter-spacing: .22em; color: var(--muted);
+    text-transform: uppercase; margin-bottom: 10px;
+  }
+  h1 {
+    font-family: var(--font-head); font-weight: 800;
+    font-size: clamp(26px, 4.5vw, 38px); line-height: 1.25; letter-spacing: -.01em;
+  }
+  h1 em { font-style: normal; color: var(--accent-hk); }
+  .trip-meta {
+    display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 14px;
+    color: var(--muted); font-size: 13.5px;
+  }
+  .trip-meta b { color: var(--ink); font-weight: 600; }
+
+  /* ─── Summary strip ─── */
+  .summary {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 12px; margin: 26px 0 6px;
+  }
+  .stat {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow);
+  }
+  .stat .k { font-size: 12px; color: var(--muted); letter-spacing: .04em; }
+  .stat .v { font-size: 17px; font-weight: 700; margin-top: 3px; }
+  .stat .v small { font-size: 12px; font-weight: 400; color: var(--muted); }
+  .stat.warn .v { color: var(--accent-hk); }
+
+  /* ─── Booking status ─── */
+  .bookings { margin: 14px 0 8px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 12.5px; padding: 6px 12px; border-radius: 999px;
+    border: 1px solid var(--border); background: var(--surface); color: var(--ink);
+  }
+  .chip .dot { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+  .dot.ok { background: var(--done); } .dot.hold { background: var(--accent-common); }
+  .dot.todo { background: var(--faint); }
+
+  /* ─── Day tabs ─── */
+  nav.days {
+    position: sticky; top: 0; z-index: 40;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(10px);
+    display: flex; gap: 6px; overflow-x: auto;
+    padding: 12px 0; margin: 18px 0 6px;
+    border-bottom: 1px solid var(--border);
+    scrollbar-width: none;
+  }
+  nav.days::-webkit-scrollbar { display: none; }
+  .tab {
+    flex: none; display: flex; flex-direction: column; align-items: flex-start; gap: 1px;
+    padding: 8px 15px; border-radius: 11px; border: 1px solid transparent;
+    background: transparent; cursor: pointer; font-family: var(--font-body);
+    color: var(--muted); text-align: left; min-height: 48px; justify-content: center;
+  }
+  .tab .d { font-size: 12px; letter-spacing: .05em; }
+  .tab .t { font-size: 14px; font-weight: 700; }
+  .tab:hover { background: var(--surface); border-color: var(--border); color: var(--ink); }
+  .tab:focus-visible { outline: 2px solid var(--accent-sz); outline-offset: 2px; }
+  .tab[aria-selected="true"] {
+    background: var(--ink); color: var(--bg);
+    border-color: var(--ink);
+  }
+  .tab .prog {
+    font-size: 10.5px; font-weight: 500; opacity: .85;
+  }
+
+  /* ─── Day panel ─── */
+  .day-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin: 26px 4px 4px; }
+  .day-head h2 { font-family: var(--font-head); font-size: 24px; font-weight: 800; }
+  .day-head .sub { color: var(--muted); font-size: 13.5px; }
+  .city-tag {
+    font-size: 11px; font-weight: 700; letter-spacing: .12em; color: #fff;
+    padding: 3px 9px; border-radius: 6px; transform: translateY(-2px);
+  }
+  .day-note {
+    margin: 10px 4px 18px; padding: 10px 14px; font-size: 13px;
+    background: var(--surface-2); border-radius: 10px; color: var(--muted);
+    display: flex; gap: 8px; align-items: baseline;
+  }
+  .day-note b { color: var(--ink); }
+
+  /* route strip */
+  .route {
+    margin: 4px 4px 14px; padding: 12px 14px; border-radius: 10px;
+    background: var(--surface); border: 1px solid var(--border);
+    display: flex; flex-wrap: wrap; align-items: center; gap: 4px 2px;
+    font-size: 13px;
+  }
+  .route .r-label {
+    font-size: 11px; font-weight: 700; letter-spacing: .08em; color: var(--muted);
+    margin-right: 8px; text-transform: uppercase;
+  }
+  .route .r-point {
+    padding: 4px 10px; border-radius: 999px; background: var(--surface-2);
+    font-weight: 600; color: var(--ink); white-space: nowrap;
+  }
+  .route .r-arrow { color: var(--faint); padding: 0 2px; font-weight: 700; }
+  .route-map {
+    margin: 0 4px 18px; border-radius: var(--radius); overflow: hidden;
+    border: 1px solid var(--border); box-shadow: var(--shadow); background: var(--surface-2);
+  }
+  .route-map-title {
+    display: block; padding: 9px 12px; font-size: 12px; font-weight: 700;
+    color: var(--muted); background: var(--surface-2); border-bottom: 1px solid var(--border);
+  }
+  .route-map iframe { display: block; width: 100%; height: 320px; border: 0; }
+
+  /* timeline */
+  .tl { list-style: none; position: relative; }
+  .tl::before {
+    content: ""; position: absolute; left: 86px; top: 14px; bottom: 14px;
+    width: 2px; background: var(--border);
+  }
+  .slot { position: relative; display: grid; grid-template-columns: 72px 1fr; gap: 0 28px; padding: 0 0 14px; }
+  .slot .time {
+    text-align: right; font-variant-numeric: tabular-nums; font-size: 13px;
+    color: var(--muted); padding-top: 15px; font-weight: 600; letter-spacing: .02em;
+  }
+  .slot .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 12px 16px; box-shadow: var(--shadow);
+    transition: border-color .18s, opacity .18s;
+  }
+  .slot .card:hover { border-color: var(--border-strong); }
+  .act {
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .check {
+    flex: none; width: 22px; height: 22px; margin-top: 3px;
+    border: 2px solid var(--border-strong); border-radius: 7px;
+    background: var(--surface); cursor: pointer; position: relative;
+    transition: background .15s, border-color .15s;
+  }
+  .check:hover { border-color: var(--done); }
+  .check:focus-visible { outline: 2px solid var(--accent-sz); outline-offset: 2px; }
+  .check[aria-checked="true"] { background: var(--done); border-color: var(--done); }
+  .check[aria-checked="true"]::after {
+    content: ""; position: absolute; left: 6px; top: 2px;
+    width: 5px; height: 10px; border: solid #fff; border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  .body { flex: 1; min-width: 0; }
+  .title { font-weight: 700; font-size: 15px; }
+  .detail-toggle {
+    display: inline-flex; align-items: center; gap: 5px; margin-top: 7px; padding: 0;
+    border: 0; background: transparent; color: var(--accent-sz); font: inherit; font-size: 12px;
+    font-weight: 700; cursor: pointer;
+  }
+  .detail-toggle::after { content: "⌄"; font-size: 15px; line-height: 1; transition: transform .18s; }
+  .detail-toggle[aria-expanded="true"]::after { transform: rotate(180deg); }
+  .detail-toggle:focus-visible { outline: 2px solid var(--accent-sz); outline-offset: 3px; border-radius: 3px; }
+  .details { margin-top: 7px; padding: 11px 13px; border-left: 3px solid color-mix(in srgb, var(--accent-sz) 45%, var(--border)); background: var(--surface-2); border-radius: 0 8px 8px 0; }
+  .detail-copy { color: var(--ink); font-size: 13px; line-height: 1.75; }
+  .detail-copy strong { display: inline-block; margin-top: 5px; color: var(--accent-sz); font-size: 12px; }
+  .detail-copy strong:first-child { margin-top: 0; }
+  .detail-photo { margin: 0 0 9px; }
+  .detail-photo-set {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; margin: 0 0 9px;
+  }
+  .detail-photo-set .detail-photo { margin: 0; }
+  .detail-photo img {
+    display: block; width: 100%; max-height: 260px; object-fit: cover;
+    border-radius: 8px; border: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .detail-photo figcaption {
+    margin-top: 4px; font-size: 11px; color: var(--faint); line-height: 1.4;
+  }
+  .detail-photo figcaption a { color: var(--faint); text-decoration: underline; }
+  .detail-photo.photo-error { display: none; }
+  @media (max-width: 560px) { .detail-photo-set { grid-template-columns: 1fr; } }
+  .desc { color: var(--muted); font-size: 13px; }
+  .desc a { color: var(--accent, #2563eb); text-decoration: underline; }
+  .global-tools, .day-tools, .place-tools { display: flex; flex-wrap: wrap; gap: 7px; }
+  .global-tools { margin-top: 12px; }
+  .day-tools { justify-content: flex-end; margin: -4px 4px 12px; }
+  .place-tools { margin-top: 8px; }
+  .utility-btn, .place-link {
+    border: 1px solid var(--border-strong); border-radius: 8px; background: var(--surface);
+    color: var(--ink); padding: 6px 10px; font: inherit; font-size: 11.5px; font-weight: 700;
+    line-height: 1.3; cursor: pointer; text-decoration: none;
+  }
+  .utility-btn:hover, .place-link:hover { border-color: var(--accent-sz); color: var(--accent-sz); }
+  .utility-btn:focus-visible, .place-link:focus-visible { outline: 2px solid var(--accent-sz); outline-offset: 2px; }
+  .copy-status { color: var(--done); font-size: 11px; align-self: center; }
+  .badges { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+  .badge {
+    font-size: 11px; padding: 2.5px 8px; border-radius: 999px; font-weight: 600;
+    border: 1px solid var(--border); color: var(--muted); background: var(--surface-2);
+  }
+  .badge.book-ok { color: var(--done); border-color: color-mix(in srgb, var(--done) 40%, var(--border)); }
+  .badge.book-todo { color: var(--accent-common); border-color: color-mix(in srgb, var(--accent-common) 45%, var(--border)); }
+  .badge.book-hold { color: var(--accent-sz); border-color: color-mix(in srgb, var(--accent-sz) 45%, var(--border)); }
+  .badge.money { font-variant-numeric: tabular-nums; }
+
+  .slot.done .card { opacity: .55; }
+  .slot.done .title { text-decoration: line-through; text-decoration-color: var(--faint); }
+  .slot.current .card { border-color: var(--accent-hk); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-hk) 18%, transparent), var(--shadow); }
+  .slot.next .card { border-color: var(--accent-sz); }
+  .schedule-state { display: inline-block; margin-left: 7px; padding: 1px 6px; border-radius: 99px; color: #fff; font-size: 10px; vertical-align: 1px; }
+  .schedule-state.current { background: var(--accent-hk); }
+  .schedule-state.next { background: var(--accent-sz); }
+
+  .stay {
+    margin: 4px 4px 0; padding: 11px 16px; border-radius: 10px;
+    border: 1px dashed var(--border-strong); color: var(--muted); font-size: 13px;
+    display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap;
+  }
+  .stay b { color: var(--ink); }
+
+  /* ─── Prep & budget ─── */
+  section.extra { margin-top: 44px; }
+  section.extra h3 {
+    font-family: var(--font-head); font-size: 19px; font-weight: 800; margin: 0 4px 14px;
+  }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 720px) { .grid2 { grid-template-columns: 1fr; } }
+  .panel {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow);
+  }
+  .panel h4 { font-size: 14px; margin-bottom: 10px; color: var(--muted); letter-spacing: .04em; }
+  ul.plain { list-style: none; }
+  ul.plain li {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 13.5px;
+  }
+  ul.plain li:last-child { border-bottom: 0; }
+  ul.plain .when { flex: none; width: 96px; font-size: 12px; color: var(--muted); font-weight: 600; padding-top: 1px; }
+  .deadline { display: inline-block; margin-top: 3px; padding: 1px 6px; border-radius: 99px; background: var(--surface-2); color: var(--muted); font-size: 10.5px; font-weight: 700; }
+  .deadline.soon { background: color-mix(in srgb, var(--accent-common) 14%, var(--surface)); color: var(--accent-common); }
+  .deadline.overdue { background: color-mix(in srgb, var(--accent-hk) 14%, var(--surface)); color: var(--accent-hk); }
+  .emergency-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
+  .emergency-item { padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-2); font-size: 13px; }
+  .emergency-item b { display: block; margin-bottom: 3px; }
+  .emergency-item .number { font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  #printAll { display: none; }
+  .budget-row {
+    display: flex; justify-content: space-between; gap: 12px;
+    padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 13.5px;
+  }
+  .budget-row:last-child { border-bottom: 0; }
+  .budget-row .amt { font-variant-numeric: tabular-nums; font-weight: 600; }
+  .budget-row.paid .amt::after { content: " 결제"; font-size: 10.5px; color: var(--done); font-weight: 700; }
+  .budget-row.total { border-top: 2px solid var(--border-strong); margin-top: 4px; padding-top: 9px; font-weight: 700; }
+  .bar { height: 7px; border-radius: 99px; background: var(--surface-2); overflow: hidden; margin: 4px 0 10px; }
+  .bar i { display: block; height: 100%; background: var(--done); border-radius: 99px; }
+
+  footer { margin-top: 44px; color: var(--faint); font-size: 12px; text-align: center; }
+
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; margin: -1px;
+    clip: rect(0 0 0 0); overflow: hidden; white-space: nowrap;
+  }
+  @media print {
+    :root { --bg: #fff; --surface: #fff; --surface-2: #f6f6f6; --ink: #111; --muted: #555; --border: #ccc; }
+    body { background: #fff; font-size: 11pt; }
+    .wrap { max-width: none; padding: 0; }
+    header { padding: 0 0 14px; }
+    nav.days, #main, .global-tools, .route-map, .detail-toggle, footer { display: none !important; }
+    #printAll { display: block; }
+    #printAll .print-day { break-before: page; }
+    #printAll .print-day:first-child { break-before: auto; }
+    #printAll h2 { margin: 0 0 8px; font-size: 18pt; }
+    #printAll .print-item { display: grid; grid-template-columns: 55px 1fr; gap: 10px; padding: 6px 0; border-bottom: 1px solid #ddd; }
+    #printAll .print-time { font-weight: 700; }
+    section.extra { margin-top: 24px; break-before: page; }
+    .panel, .stat { box-shadow: none; }
+    a { color: #111; text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Shenzhen · Hong Kong — Honeymoon No.2</div>
+    <h1>선전·홍콩 <em>5박 6일</em> 여행 일정표</h1>
+    <div class="trip-meta">
+      <span><b>2026.10.9 금 — 10.14 수</b></span>
+      <span>2인 (신혼부부)</span>
+      <span>인천↔홍콩 왕복 + 고속철 선전 사이드트립</span>
+      <span>홍콩 2박 → 선전 3박</span>
+    </div>
+    <div class="summary">
+      <div class="stat"><div class="k">항공 (2인 왕복)</div><div class="v">₩849,000 <small>결제완료 · 20kg 포함</small></div></div>
+      <div class="stat"><div class="k">홍콩 숙소 2박</div><div class="v">₩398,632 <small>결제완료</small></div></div>
+      <div class="stat"><div class="k">선전 숙소 3박</div><div class="v">CNY 2,597 <small>≈₩530,396 · 현장결제</small></div></div>
+      <div class="stat warn"><div class="k">총 예상 (2인)</div><div class="v">₩3,732,828 <small>결제완료 ₩1,247,632</small></div></div>
+    </div>
+    <div class="bookings" id="bookings"></div>
+    <div class="global-tools screen-only">
+      <div class="view-switch" role="group" aria-label="화면 보기 전환">
+        <button type="button" id="viewPc" aria-pressed="true">🖥 PC 화면</button>
+        <button type="button" id="viewMobile" aria-pressed="false">📱 모바일 화면</button>
+      </div>
+      <button class="utility-btn" type="button" id="printBtn">전체 일정 인쇄 / PDF</button>
+      <span class="copy-status" id="globalStatus" aria-live="polite"></span>
+    </div>
+  </header>
+
+  <nav class="days" role="tablist" aria-label="여행 날짜" id="tabs"></nav>
+  <main id="main"></main>
+  <section id="printAll" aria-label="전체 여행 일정 인쇄본"></section>
+
+  <section class="extra">
+    <h3>출발 전 준비</h3>
+    <div class="grid2">
+      <div class="panel">
+        <h4>사전예약 필요 (미예약)</h4>
+        <ul class="plain" id="prepList"></ul>
+      </div>
+      <div class="panel">
+        <h4>예산 (2인 기준)</h4>
+        <div id="budgetBox"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="extra" id="emergencySection">
+    <h3>비상정보 · 현지 제시용</h3>
+    <div class="panel">
+      <div class="emergency-grid" id="emergencyGrid"></div>
+    </div>
+  </section>
+
+  <footer>
+    체크 상태는 이 브라우저에 자동 저장됩니다 (localStorage). · 예약번호·카드정보 등 민감정보는 표시하지 않습니다.<br>
+    기준: shenzhen-hongkong-trip 프로젝트 문서 (2026-09-02 갱신)
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ─── PC / Mobile view switch ─── */
+  (function () {
+    var VIEW_KEY = "szhk-trip-view-v1";
+    var root = document.documentElement;
+    var btnPc = document.getElementById("viewPc");
+    var btnMobile = document.getElementById("viewMobile");
+    function applyView(view) {
+      if (view === "mobile") {
+        root.setAttribute("data-view", "mobile");
+        btnPc.setAttribute("aria-pressed", "false");
+        btnMobile.setAttribute("aria-pressed", "true");
+      } else {
+        root.removeAttribute("data-view");
+        btnPc.setAttribute("aria-pressed", "true");
+        btnMobile.setAttribute("aria-pressed", "false");
+      }
+      try { localStorage.setItem(VIEW_KEY, view); } catch (e) {}
+    }
+    var saved = "pc";
+    try { saved = localStorage.getItem(VIEW_KEY) || (matchMedia("(max-width: 600px)").matches ? "mobile" : "pc"); } catch (e) {}
+    applyView(saved);
+    btnPc.addEventListener("click", function () { applyView("pc"); });
+    btnMobile.addEventListener("click", function () { applyView("mobile"); });
+  })();
+
+  var ACCENT = { hk: "var(--accent-hk)", sz: "var(--accent-sz)", common: "var(--accent-common)" };
+  var CITY_NAME = { hk: "홍콩", sz: "선전", both: "홍콩→선전", szhk: "선전→홍콩", kr: "한국" };
+
+  var TRIP = {
+    days: [
+      {
+        id: "d1", tab: "Day 1", tabSub: "10.9 금", title: "출국 · 홍콩 도착", city: "both",
+        note: "홍콩익스프레스 UO619 ICN 12:45 → HKG 15:35. 리무진은 넉넉히 08~09시대 승차(09:45 공항 도착 목표).",
+        route: ["동탄 자택", "인천공항(T1)", "홍콩(HKG)", "Harbour Grand(노스포인트)", "침사추이 프롬나드", "스타페리", "센트럴·소호"],
+        mapGroups: [
+          { label: "홍콩 도착 후 일정", points: ["Hong Kong International Airport", "Harbour Grand Hong Kong North Point", "Tsim Sha Tsui Promenade Hong Kong", "Star Ferry Pier Central Hong Kong", "Soho Central Hong Kong"] }
+        ],
+        items: [
+          { time: "08:30", title: "동탄 → 인천공항 리무진 (8837번)", desc: "₩16,200/인 · T2 기준 막차 22:00. 09:45 공항 도착 목표(출발 3시간 전).", badges: [["money", "₩32,400 왕복"], ["book-todo", "미결제"]] },
+          { time: "09:45", title: "인천공항 T1 출국 수속", desc: "UO619 탑승. 기내수하물은 개인물품 1개(40×25×20cm, 7kg)만 포함." },
+          { time: "12:45", title: "ICN 출발 — 홍콩익스프레스 UO619", desc: "15:35 HKG T1 도착. Essential 요금(20kg 위탁 포함).", badges: [["book-ok", "결제완료"], ["money", "2인 ₩849,000"]] },
+          { time: "15:35", title: "홍콩 입국 → 숙소 이동 · 체크인", desc: "Harbour Grand Hong Kong (노스포인트, 디럭스 킹룸). Fortress Hill MTR 인근.", badges: [["book-ok", "예약완료·결제완료"], ["money", "2박 ₩398,632 · 환불불가"]] },
+          { time: "18:30", title: "저녁 식사", desc: "노스포인트 후보: <a href=\"https://www.google.com/maps/search/?api=1&query=Fisholic%20Fortress%20Hill%20Hong%20Kong\" target=\"_blank\">Fisholic</a>(캐주얼 시푸드, Fortress Hill), <a href=\"https://www.google.com/maps/search/?api=1&query=Good%20Luck%20Dai%20Pai%20Dong%20North%20Point%20Hong%20Kong\" target=\"_blank\">Good Luck Dai Pai Dong</a>(전통식) — 예약 미정.", badges: [["book-todo", "식당 미확정"]] },
+          { time: "19:30", title: "침사추이 프롬나드 자리 잡기", desc: "빅토리아항과 홍콩섬 스카이라인을 정면으로 보는 해변 산책로. 20:00 심포니 오브 라이트 관람을 위해 미리 시야가 트인 자리를 잡습니다." },
+          { time: "20:00", title: "심포니 오브 라이트", desc: "매일 20:00, 약 13분. 빅토리아항 조명쇼." },
+          { time: "21:00", title: "스타페리 → 센트럴 · 소호 바 거리", desc: "COA는 웨이팅 길면 Whisky & Words로.", badges: [["book-todo", "COA 예약불가·웨이팅"]] }
+        ],
+        stay: "홍콩 1박차 — Harbour Grand Hong Kong (디럭스 킹룸)"
+      },
+      {
+        id: "d2", tab: "Day 2", tabSub: "10.10 토", title: "홍콩 종일", city: "hk",
+        note: "딤섬은 오픈런, 피크는 해질녘. 피크트램 시간지정권은 미리 사두면 대기 단축.",
+        route: ["Harbour Grand(노스포인트)", "막심스 팰리스(카트딤섬)", "삼수이포 압리우 스트리트", "빅토리아 피크", "소호(저녁·바 거리)"],
+        mapPoints: ["Harbour Grand Hong Kong North Point", "Maxim's Palace City Hall Hong Kong", "Apliu Street Sham Shui Po Hong Kong", "Victoria Peak Hong Kong", "Soho Central Hong Kong"],
+        items: [
+          { time: "09:00", title: "조식" },
+          { time: "10:00", title: "막심스 팰리스 카트딤섬", desc: "예약 불가 매장 — 오픈 시간 전 도착(오픈런).", badges: [["book-todo", "예약불가·오픈런"]] },
+          { time: "12:00", title: "삼수이포 압리우 스트리트", desc: "전자부품·중고카메라 거리." },
+          { time: "13:00", title: "점심 식사", desc: "삼수이포 후보: <a href=\"https://www.google.com/maps/search/?api=1&query=Lau%20Sum%20Kee%20Noodle%20Sham%20Shui%20Po\" target=\"_blank\">Lau Sum Kee</a>(새우알 비빔면), <a href=\"https://www.google.com/maps/search/?api=1&query=Oi%20Man%20Sang%20Sham%20Shui%20Po\" target=\"_blank\">Oi Man Sang</a>(다이파이동) — 예약 미정.", badges: [["book-todo", "식당 미확정"]] },
+          { time: "14:30", title: "자유 시간", desc: "간식/차 후보: <a href=\"https://www.google.com/maps/search/?api=1&query=Kung%20Wo%20Beancurd%20Factory%20Sham%20Shui%20Po\" target=\"_blank\">Kung Wo Beancurd Factory</a>(두부푸딩, 삼수이포)." },
+          { time: "17:00", title: "빅토리아 피크 (해질녘)", desc: "피크트램 이용. 시간지정권은 매표줄만 생략(우선탑승 아님), 일자+시간 변경 불가. Sky Terrace 428은 공식 08:30~22:00 운영(2026-09-11 재확인).", badges: [["book-todo", "사전구매 권장"], ["money", "콤보 2인 HK$240~292부터 (10/10 최종가 확인)"]] },
+          { time: "19:30", title: "저녁 식사", desc: "소호 인근 후보: <a href=\"https://www.google.com/maps/search/?api=1&query=The%20Chairman%20Restaurant%20Central%20Hong%20Kong\" target=\"_blank\">The Chairman</a>(+852 2555 2202, 미쉐린·Asia's 50 Best 2026 1위, 게찜 사전예약 필수·경쟁 치열), <a href=\"https://www.google.com/maps/search/?api=1&query=Ho%20Lee%20Fook%20Soho%20Hong%20Kong\" target=\"_blank\">Ho Lee Fook</a>(+852 3897 6607, 일~수 18-22:30·목~토 18-23:30, SevenRooms 예약), <a href=\"https://www.google.com/maps/search/?api=1&query=Neighborhood%20Restaurant%20Hollywood%20Road%20Hong%20Kong\" target=\"_blank\">Neighborhood</a>(월~토 18-23:30, 방문일 10/10 토요일은 영업일) — 예약 미정.", badges: [["book-todo", "식당 미확정"]] },
+          { time: "21:00", title: "House Welley (위스키 바)", desc: "피크·소호 저녁 일정 뒤 천천히 한 잔하며 마무리하는 위스키 바 후보. 당일 영업 여부와 좌석 상황은 방문 전에 확인합니다." }
+        ],
+        stay: "홍콩 2박차 — Harbour Grand Hong Kong"
+      },
+      {
+        id: "d3", tab: "Day 3", tabSub: "10.11 일", title: "홍콩 → 선전 이동 · 푸톈", city: "both",
+        note: "서구룡역은 홍콩 출경·중국 입경 동시 처리(일지양검). 공식 권장 45분 전 도착. Free Sky는 매일 10:00-20:00(요일 무관, 2026-09-08 재확인).",
+        route: ["Harbour Grand(체크아웃)", "서구룡역", "고속철(약 14분)", "푸톈역", "The Langham(선전)", "화창베이", "핑안 파이낸스 Free Sky"],
+        mapGroups: [
+          { label: "홍콩 출발 일정", points: ["Harbour Grand Hong Kong North Point", "West Kowloon Station Hong Kong"] },
+          { label: "선전 도착 후 일정", points: ["Futian Station Shenzhen", "The Langham Shenzhen", "Huaqiangbei Shenzhen", "Ping An Finance Centre Shenzhen"] }
+        ],
+        items: [
+          { time: "08:30", title: "조식 · 체크아웃" },
+          { time: "09:30", title: "서구룡역 이동 (출입경 대비 여유)", desc: "평일 기준 45분 전 도착 권장.", badges: [["book-todo", "고속철 미예약"]] },
+          { time: "10:30", title: "고속철 탑승 — 서구룡 → 푸톈", desc: "약 14분. 하루 약 59편(06:45~22:19). 2등석 1인 약 ₩15,000.", badges: [["money", "왕복 2인 약 ₩60,000"], ["book-todo", "미예약"]] },
+          { time: "11:30", title: "The Langham, Shenzhen 체크인", desc: "Premier King 43㎡ · 고층 도시전망 · 욕조. 처공묘역 도보 500m.", badges: [["book-ok", "예약완료"], ["money", "3박 CNY 2,597.26 ≈ ₩530,396 · 현장결제 · 10/9 23:59까지 무료취소"]] },
+          { time: "13:00", title: "점심 식사", desc: "화창베이 인근 후보: 지하 푸드코트(가성비), 潮汕 소고기 샤브샤브, <a href=\"https://www.google.com/maps/search/?api=1&query=Chaofa%20Beef%20Restaurant%20Zhonghang%20City%20Shenzhen\" target=\"_blank\">Chaofa</a>(中航城) — 예약 미정.", badges: [["book-todo", "식당 미확정"]] },
+          { time: "14:00", title: "화창베이 전자상가 — 생활형 AI 기기 체험", desc: "오후 통째로 쇼핑·구경. 세그마켓 등에서 AI 안경·통역기·드론·로봇을 직접 비교하고 시연·언어 지원·귀국 후 사용 가능 여부를 확인.", badges: [["money", "쇼핑예산 ₩500,000"]] },
+          { time: "18:30", title: "저녁 식사", desc: "COCO Park/PA MALL 후보: <a href=\"https://www.google.com/maps/search/?api=1&query=%E6%B6%A6%E5%9B%AD%E5%9B%9B%E5%AD%A3%E6%A4%B0%E5%AD%90%E9%B8%A1%20COCO%20Park%20Shenzhen\" target=\"_blank\">润园四季椰子鸡</a>, <a href=\"https://www.google.com/maps/search/?api=1&query=%E5%A4%AA%E4%BA%8C%E9%85%B8%E8%8F%9C%E9%B1%BC%20COCO%20Park%20Shenzhen\" target=\"_blank\">太二酸菜魚</a>, PA MALL 내 미쉐린·헤이전주 매장 — 예약 미정.", badges: [["book-todo", "식당 미확정"]] },
+          { time: "19:15", title: "핑안 파이낸스 116층 Free Sky", desc: "매일 10:00-20:00, 최종입장 19:15(요일 무관, 2026-09-08 재확인 — 기존 '일요일 21시' 기록 폐기). 전날(10/10) 예약 권장. 현장 CNY 200, Klook 실시간가 2인 약 HK$398≈₩73,200(2026-09-08 확인).", badges: [["book-todo", "사전예약 필요"], ["money", "2인 약 ₩73,200 (Klook 기준)"]] }
+        ],
+        stay: "선전 1박차 — The Langham, Shenzhen (Premier King)"
+      },
+      {
+        id: "d4", tab: "Day 4", tabSub: "10.12 월", title: "선전 — 난산", city: "sz",
+        note: "난산에서 테크 기업 외관·소비자 AI 기기·로보택시·드론배달을 생활형으로 체험. 로보택시/드론은 중국 앱·결제와 당일 운영 여부에 따라 대체 일정으로 전환.",
+        route: ["The Langham", "텐센트 빈하이빌딩", "화웨이 체험관", "난산 MixC·하이샹청(AI 기기)", "난산/첸하이 로보택시(가능 시)", "인재공원(드론배달·라이트쇼)", "셔커우 Sea World"],
+        mapPoints: ["The Langham Shenzhen", "Tencent Binhai Tower Shenzhen", "Huawei Experience Store Nanshan Shenzhen", "MixC Shenzhen Bay", "Qianhai Shenzhen", "Talent Park Shenzhen", "Shekou Sea World Shenzhen"],
+        items: [
+          { time: "09:00", title: "조식", desc: "랭함 조식은 예약 미포함, 유료 추가 — Silk 조식 매일 06:30-10:30, OTA 취합가 1인 CNY 188 추정. 체크인 시 프런트 직접 문의 필요." },
+          { time: "10:30", title: "텐센트 빈하이빌딩 외관·해안 산책로", desc: "일반 개인은 내부 출입·현장 예약이 불가한 업무용 사옥으로 확인. 기업/학술/정부 단체의 사전승인·초청이 없는 한 외관과 해안 산책로만 관람합니다." },
+          { time: "11:30", title: "화웨이 스마트 라이프관(난산) 체험", desc: "일반 공개 리테일 매장으로 입장 예약 없이 제품·AI 기능을 체험. 난산 欢乐海岸 지점은 10:00-22:00 안내이나, 방문 직전 지점·영업시간을 재확인합니다." },
+          { time: "12:30", title: "점심 식사", desc: "난산 하이샹청 인근 후보: <a href=\"https://www.google.com/maps/search/?api=1&query=%E8%9F%B9%E8%88%88%E8%A8%98%20%E6%B5%B7%E5%B2%B8%E5%9F%8E%20%E6%B7%B1%E5%9C%B3\" target=\"_blank\">蟹興記</a>(蟹黃麵), <a href=\"https://www.google.com/maps/search/?api=1&query=%E6%B3%B0%E5%A6%83%E6%AE%BF%20%E6%B5%B7%E5%B2%B8%E5%9F%8E%20%E6%B7%B1%E5%9C%B3\" target=\"_blank\">泰妃殿</a>(태국음식), <a href=\"https://www.google.com/maps/search/?api=1&query=%E5%B0%8F%E7%82%B3%E5%8B%9D%20%E6%B5%B7%E5%B2%B8%E5%9F%8E%20%E6%B7%B1%E5%9C%B3\" target=\"_blank\">小炳勝</a>(광둥요리) — 예약 미정.", badges: [["book-todo", "식당 미확정"]] },
+          { time: "14:00", title: "난산 MixC · 하이샹청 — 생활형 AI 기기 체험", desc: "AI 안경·통역기·드론·로봇 기기 시연을 우선 확인. 매장별 재고·데모는 당일 다를 수 있습니다." },
+          { time: "16:00", title: "로보택시 체험 — 난산/첸하이 (가능 시)", desc: "Pony.ai 등 무인주행 호출이 가능하면 짧은 구간 체험. 중국 앱·실명/결제·블루투스 잠금 요구로 막히면 MixC 체험 시간을 연장합니다.", badges: [["book-todo", "당일 앱·결제 확인"]] },
+          { time: "18:00", title: "인재공원 — 미단 드론배달 · 라이트쇼", desc: "미단(Meituan) 앱에서 공원 수령지 주문이 가능하면 음료/간식을 드론으로 수령. 불가하면 공원 산책 후 19시경 라이트쇼 관람.", badges: [["book-todo", "당일 수령지 확인"]] },
+          { time: "20:30", title: "셔커우 Sea World — 저녁 · 야경", desc: "저녁 후보: <a href=\"https://www.google.com/maps/search/?api=1&query=%E6%B0%B4%E6%89%8B%E9%A4%90%E5%8E%85%20%E6%B5%B7%E4%B8%8A%E4%B8%96%E7%95%8C%20%E6%B7%B1%E5%9C%B3\" target=\"_blank\">水手餐厅</a>(시푸드·갑판석), <a href=\"https://www.google.com/maps/search/?api=1&query=%E5%B9%95%E7%88%B5%E9%A4%90%E5%8E%85%20%E6%B5%B7%E4%B8%8A%E4%B8%96%E7%95%8C%20%E6%B7%B1%E5%9C%B3\" target=\"_blank\">幕爵餐厅</a>(프렌치 퓨전·야경), <a href=\"https://www.google.com/maps/search/?api=1&query=%E5%B1%B1%E6%B5%B7%E7%95%8C%20Omakase%20%E6%B5%B7%E4%B8%8A%E4%B8%96%E7%95%8C%20%E6%B7%B1%E5%9C%B3\" target=\"_blank\">山海界·Omakase</a>(일식) — 예약 미정.", badges: [["book-todo", "식당 미확정"]] }
+        ],
+        stay: "선전 2박차 — The Langham, Shenzhen"
+      },
+      {
+        id: "d5", tab: "Day 5", tabSub: "10.13 화", title: "선전 여유일 — OCT-LOFT 완급조절", city: "sz", confirmed: true,
+        note: "2026-09-02 확정안. Day6 출국 전날이라 피로를 낮추는 완급조절 일정. 갤러리·전시는 전날 운영시간 재확인.",
+        route: ["The Langham(느긋한 조식)", "OCT-LOFT", "마사지/호텔 복귀", "The Langham(唐阁 저녁)", "야경 산책"],
+        mapPoints: ["The Langham Shenzhen", "OCT-LOFT Shenzhen", "The Langham Shenzhen"],
+        items: [
+          { time: "09:00", title: "호텔 밖 느긋한 조식", desc: "<a href=\"https://www.google.com/maps/search/?api=1&query=%E5%A4%AA%E5%85%B4%E9%A4%90%E5%8E%85%20%E4%B8%9C%E6%B5%B7%E5%9D%8A%20%E6%B7%B1%E5%9C%B3\" target=\"_blank\">太兴餐厅(东海坊店)</a> — 홍콩 정통 차찬텡 체인, 랭함 호텔에서 도보 약 3분(0.2km). 냉동밀크티·소완탕 등. 랭함 조식은 미포함·유료(Silk 1인 약 CNY 188)라 밖에서 해결. 매장 영업시간은 현지 도착 후 재확인 권장. 또는 수영장·스파.", badges: [["book-todo", "매장 확정 아님"]] },
+          { time: "11:30", title: "OCT-LOFT 이동", desc: "교청동(Qiaocheng East)역 Exit A 도보 약 5분." },
+          { time: "12:00", title: "OCT-LOFT 구경", desc: "옛 공장지대 개조 문화단지. 입장 무료 — OCAT은 화~일 10:00~17:30(월 휴관), 방문일 10/13(화)은 정상 운영일. 입장료는 출처별 상이(상설전 무료/특별전 CNY 30 혼재) — 전날 재확인." },
+          { time: "13:00", title: "점심 + 카페·서점/전시", desc: "OCT-LOFT 내 후보: <a href=\"https://www.google.com/maps/search/?api=1&query=Tequilazo%20OCT-LOFT%20Shenzhen\" target=\"_blank\">Tequilazo</a>(멕시칸, 북구역), <a href=\"https://www.google.com/maps/search/?api=1&query=Foobar%20OCT-LOFT%20Shenzhen\" target=\"_blank\">Foobar</a>(바·레스토랑) — 예약 미정.", badges: [["book-todo", "식당 미확정"]] },
+          { time: "15:30", title: "마사지 (예약 권장) 또는 호텔 복귀 휴식", badges: [["book-todo", "예약 여부 결정"]] },
+          { time: "17:00", title: "숙소 복귀 · 짐 정리", desc: "내일 홍콩 복귀 대비." },
+          { time: "18:30", title: "저녁 — 선전 마지막 만찬", desc: "랭함 호텔 내 <a href=\"https://www.google.com/maps/search/?api=1&query=%E5%94%90%E9%98%81%20Tang%20Court%20The%20Langham%20Shenzhen\" target=\"_blank\">唐阁 Tang Court</a>(정통 광둥요리·미쉐린 자매점, 3층, 런치 11:30-14:30·디너 17:30-22:00) 추천 — 전화 +86-755-8828-9888 내선8923 또는 이메일 tlszx.tangcourt@langhamhotels.com로 예약. 스마트 캐주얼. 대안: 秀·Silk(호텔 뷔페, 디너 17:30-21:30).", badges: [["book-todo", "예약 필요(직접 예약 예정)"]] },
+          { time: "20:00", title: "야경 산책 (자유)" }
+        ],
+        stay: "선전 3박차 — The Langham, Shenzhen"
+      },
+      {
+        id: "d6", tab: "Day 6", tabSub: "10.14 수", title: "선전 → 홍콩 → 출국", city: "szhk",
+        note: "UO626 HKG 16:55 → ICN 21:35. 귀국 리무진 막차(T2 22:00)를 놓치지 않도록 입국 수속 서둘 것 — 놓치면 심야 택시/공항버스.",
+        route: ["The Langham(체크아웃)", "푸톈역", "고속철", "서구룡역(자유일정)", "홍콩공항(HKG)", "인천(ICN)", "동탄 자택"],
+        mapGroups: [
+          { label: "선전 출발 일정", points: ["The Langham Shenzhen", "Futian Station Shenzhen"] },
+          { label: "홍콩 경유·출국 일정", points: ["West Kowloon Station Hong Kong", "Elements Mall Hong Kong", "Hong Kong International Airport"] }
+        ],
+        items: [
+          { time: "08:00", title: "기상 · 조식 · 체크아웃", desc: "짐 최종 정리." },
+          { time: "09:00", title: "푸톈역 이동 (45분 전 도착)", desc: "평일 아침이라도 출입경 대비 여유. 첫차 07:07, 배차 5~15분." },
+          { time: "10:00", title: "고속철 탑승 — 푸톈 → 서구룡", desc: "약 14분. 막차 23:00." },
+          { time: "11:00", title: "홍콩 도심 반나절 자유", desc: "쇼핑/카페 · 짐 보관. 공항 이동은 14:00경 시작. 점심 후보: ELEMENTS몰 <a href=\"https://www.google.com/maps/search/?api=1&query=Pak%20Loh%20Chiu%20Chow%20Elements%20Tsim%20Sha%20Tsui\" target=\"_blank\">Pak Loh Chiu Chow</a>(潮州요리), <a href=\"https://www.google.com/maps/search/?api=1&query=LE-TA-SU%20Elements%20Tsim%20Sha%20Tsui\" target=\"_blank\">LE-TA-SU</a> 개인 훠궈 — 예약 미정." },
+          { time: "14:00", title: "공항 이동" },
+          { time: "15:00", title: "HKG T2 출국 수속", desc: "UO626 탑승." },
+          { time: "16:55", title: "HKG 출발 — 홍콩익스프레스 UO626", desc: "21:35 ICN T1 도착.", badges: [["book-ok", "결제완료"]] },
+          { time: "21:35", title: "인천 도착 → 동탄 리무진", desc: "T2 막차 22:00 — 입국 수속 서두르기.", badges: [["book-todo", "막차 주의"]] }
+        ],
+        stay: "귀국 — 인천 T1 21:35 도착"
+      }
+    ],
+    prep: [
+      ["Day2 전", "빅토리아 피크 트램 시간지정권 사전구매", "thepeak.com.hk 또는 Klook", "2026-10-08"],
+      ["10/10", "핑안 파이낸스 Free Sky 예약 (Day3 방문, 20시 마감 유의)", "공식 홈페이지 / Klook / Trip.com", "2026-10-10"],
+      ["출발 전", "여행자보험 가입 (6일 2인 약 ₩40,000)", "미가입", "2026-10-07"],
+      ["출발 전", "중국+홍콩 겸용 eSIM 구매 (6일 2인 약 ₩80,000)", "미구매", "2026-10-07"],
+      ["출발 전", "알리페이/위챗페이에 한국 카드 등록", "선전 결제용", "2026-10-07"],
+      ["10/1 전", "여권 유효기간 확인 (출발일 기준 6개월 이상)", "미확인", "2026-10-01"],
+      ["현장", "Day4 조식: 랭함 조식 추가 여부/가격 확인 (예약 미포함, 유료 추정 1인 CNY 188) / Day5는 太兴餐厅 등 호텔 밖 차찬텡 예정", "체크인 시"],
+      ["Day5 전날", "OCT-LOFT 갤러리·OCAT 운영시간 재확인", "공식 채널", "2026-10-12"]
+    ],
+    budget: [
+      ["항공 (왕복 2인)", 849000, true, "HK Express Essential · 20kg 포함"],
+      ["홍콩 숙소 2박", 398632, true, "Harbour Grand · 환불불가"],
+      ["선전 숙소 3박", 530396, false, "The Langham · CNY 2,597.26 현장결제"],
+      ["현지 교통", 234800, false, "고속철 6만 + 리무진 6.48만 + 홍콩 5만 + 선전 6만"],
+      ["식비 (홍콩 2일 + 선전 3일)", 650000, false, ""],
+      ["관광 입장권", 250000, false, "Free Sky + 피크트램 등 2인"],
+      ["통신 eSIM", 80000, false, "중국+홍콩 겸용 6일 2인"],
+      ["여행자보험", 40000, false, "단기 해외 2인"],
+      ["쇼핑 예산", 500000, false, "화창베이 전자상가 등"],
+      ["예비비", 200000, false, "총액의 약 10%"]
+    ]
+  };
+
+  /* ─── render ─── */
+  var main = document.getElementById("main");
+  var tabsEl = document.getElementById("tabs");
+  var LS_KEY = "szhk-trip-checks-v1";
+  var DETAILS = {
+    "d1-4": "<strong>선택 가이드</strong><br>Fisholic은 첫날 피로를 고려해 가볍게 먹기 좋은 캐주얼 시푸드 후보이고, Good Luck Dai Pai Dong은 홍콩식 노천 대폿집 분위기를 경험하기 좋은 후보입니다. 입국·체크인 시간이 밀리면 이동거리가 짧은 곳을 우선하고, 두 곳 모두 방문 직전 영업 여부와 대기시간을 확인하세요.",
+    "d1-5": "<strong>어떤 곳인가요?</strong><br>침사추이 프롬나드는 빅토리아항 건너편 홍콩섬의 고층 빌딩을 한눈에 보는 대표 산책 구간입니다. 해 질 무렵부터 야경까지 분위기가 빠르게 바뀌므로 19:30쯤 도착하면 사진 촬영과 관람 위치 선정에 여유가 있습니다.<br><strong>방문 팁</strong><br>심포니 오브 라이트는 항구 정면 시야가 중요하므로 나무·시설물에 가리지 않는 자리를 고르세요. 비나 안개가 심하면 조명 가시성이 떨어질 수 있습니다.",
+    "d1-6": "<strong>관람 포인트</strong><br>빅토리아항 양쪽의 건물 조명과 레이저를 음악에 맞춰 구성한 야간 쇼입니다. 일정에는 매일 20:00, 약 13분으로 반영되어 있으며 쇼 자체보다 항구 전체 야경을 함께 감상하는 일정으로 생각하면 좋습니다.<br><strong>동선</strong><br>관람 후 스타페리 선착장으로 이동해 센트럴로 건너가면 다음 소호 일정과 자연스럽게 연결됩니다.",
+    "d1-7": "<strong>동선 설명</strong><br>스타페리는 침사추이와 센트럴을 잇는 짧은 항구 이동 자체가 야경 체험인 구간입니다. 센트럴 도착 후 경사진 소호 골목과 바 거리를 둘러봅니다.<br><strong>바 선택</strong><br>COA는 예약 없이 대기가 길 수 있으므로 현장 대기시간이 부담되면 Whisky & Words로 바로 전환하는 플랜 B를 유지하세요.",
+    "d2-1": "<strong>왜 가나요?</strong><br>막심스 팰리스는 전통적인 카트 딤섬 분위기를 경험하는 것이 핵심인 식당입니다. 예약이 되지 않아 늦게 도착할수록 대기가 길어질 수 있으므로 오전 오픈런 일정으로 잡았습니다.<br><strong>주문 팁</strong><br>한 번에 많이 담기보다 카트가 돌 때 소량씩 골라 여러 종류를 나눠 먹는 방식이 좋습니다. 방문 직전 오픈 시간과 휴무 여부는 다시 확인하세요.",
+    "d2-2": "<strong>어떤 곳인가요?</strong><br>압리우 스트리트는 전자부품, 케이블, 공구, 중고 카메라와 각종 소형 전자제품을 구경하는 삼수이포의 시장 거리입니다. 완제품 쇼핑보다 골목을 걸으며 홍콩의 밀도 높은 전자상가 분위기를 보는 재미가 큽니다.<br><strong>구매 팁</strong><br>중고품은 작동 상태와 구성품을 현장에서 확인하고, 충전 규격·전압·반품 가능 여부를 확인한 뒤 구매하세요.",
+    "d2-3": "<strong>후보 비교</strong><br>Lau Sum Kee는 새우알 향이 특징인 비빔면 계열을 간단히 맛보기 좋고, Oi Man Sang은 다이파이동 분위기에서 여러 광둥식 요리를 나눠 먹는 쪽에 가깝습니다. 앞선 딤섬 식사량이 많았다면 면 한 그릇이나 간식 중심으로 가볍게 조정하세요.<br><strong>상태</strong><br>두 곳 모두 후보이며 예약·방문은 아직 확정하지 않았습니다.",
+    "d2-4": "<strong>간식 설명</strong><br>Kung Wo Beancurd Factory는 삼수이포 동선에서 두부푸딩 같은 콩 디저트를 맛보는 간식 후보입니다. 압리우 스트리트 구경 뒤 잠시 쉬어가기 좋으며, 저녁 피크 일정 전이라 과식하지 않는 편이 좋습니다.",
+    "d2-5": "<strong>관람 계획</strong><br>빅토리아 피크는 홍콩섬과 빅토리아항의 고층 빌딩을 높은 곳에서 내려다보는 대표 야경 지점입니다. 해 지기 전 도착해 주간·노을·야경을 연속으로 보는 일정입니다.<br><strong>티켓 주의</strong><br>공식 webstore에서 트램왕복+Sky428 사전예약 콤보는 1인 HK$120부터, 일반 콤보는 1인 HK$146부터(2인 HK$240~292부터)로 2026-09-11 확인했습니다. “부터” 가격이므로 10/10(토) 날짜·시간 선택 뒤 최종가를 확인하세요. Sky Terrace 428은 공식 08:30~22:00 운영입니다. 시간지정권은 매표 대기만 줄여주며 우선탑승권은 아니고, 지정 일자·시간 변경이 불가하므로 날씨와 이동시간을 확인한 뒤 구매하세요.",
+    "d2-6": "<strong>후보 비교</strong><br>The Chairman(+852 2555 2202, 18 Kau U Fong)은 Asia's 50 Best 2026 1위에 오른 목적형 식사이며 게찜은 사전주문 필수, 예약 경쟁이 매우 치열해 당일 예약은 사실상 불가합니다. Ho Lee Fook(+852 3897 6607)은 SevenRooms 온라인 예약으로 비교적 접근이 쉬운 모던 캔토니즈, Neighborhood(61 Hollywood Road)는 월~토 18:00-23:30 운영으로 방문일(10/10 토요일)에 정상 영업합니다.<br><strong>결정 기준</strong><br>The Chairman은 방문 몇 주 전 예약이 필요하므로 원한다면 최우선으로 시도하세요. 세 곳 모두 현재 미확정입니다.",
+    "d2-7": "<strong>일정 역할</strong><br>House Welley는 긴 홍콩 종일 일정의 마지막에 위스키 한 잔으로 마무리하는 선택 일정입니다. 피크와 저녁 식사에서 체력이 많이 소모되면 생략해도 전체 일정에는 영향이 없습니다.<br><strong>확인 사항</strong><br>방문 당일 영업시간, 좌석 상황, 마지막 주문 시간을 확인하세요.",
+    "d3-4": "<strong>선택 가이드</strong><br>화창베이 지하 푸드코트는 빠르고 저렴하게 여러 현지 음식을 고르기 좋고, 潮汕 소고기 샤브샤브는 신선육을 여유 있게 즐기는 식사입니다. Chaofa는 中航城 안에서 접근성이 좋은 조주식 소고기 후보입니다.<br><strong>동선</strong><br>체크인 직후이므로 짐 정리와 입국 피로를 보고 식사 시간을 조절한 뒤 전자상가로 이동하세요.",
+    "d3-5": "<strong>어떤 곳인가요?</strong><br>화창베이는 부품 상가부터 완제품·수리·액세서리 매장까지 밀집한 선전의 대형 전자상권입니다. 한 건물만 보는 곳이 아니라 여러 몰과 층을 비교하며 돌아보는 일정이라 관심 품목을 미리 정하면 효율적입니다.<br><strong>구매 팁</strong><br>같은 제품도 매장별 가격과 구성품이 다를 수 있으니 바로 결제하지 말고 비교하세요. 전원 규격, 언어 설정, 보증 범위, 귀국 시 반입 가능 여부를 확인해야 합니다.",
+    "d3-6": "<strong>후보 비교</strong><br>润园四季椰子鸡은 달고 담백한 코코넛 육수의 치킨 훠궈, 太二酸菜魚는 산미와 매운맛이 있는 절임채소 생선요리가 중심입니다. PA MALL 안의 다른 매장은 Free Sky와 같은 건물 동선이라 이동을 최소화하기 좋습니다.<br><strong>추천 방식</strong><br>전망대 입장시간이 확정되면 전후로 대기시간이 짧은 매장을 고르세요. 현재 모두 예약 미정입니다.",
+    "d3-7": "<strong>어떤 곳인가요?</strong><br>Free Sky는 핑안 파이낸스 센터 116층에서 선전 도심을 내려다보는 전망대입니다. 화창베이의 낮은 거리 풍경과 대비되는 선전의 초고층 스카이라인을 보는 것이 핵심입니다.<br><strong>운영·예약</strong><br>매일 10:00~20:00, 최종입장 19:15로 확인했습니다(2026-09-08 재확인, 요일별 차등 없음). 현장 CNY 200이며 Klook 실시간가는 2인 약 HK$398입니다. 10/10에 온라인 예약하고, Klook 구매 시 B1 매표소 환표 조건을 확인하세요.",
+    "d4-1": "<strong>어떤 곳인가요?</strong><br>텐센트 빈하이빌딩은 선전 난산의 대표적인 테크 기업 본사 권역으로, 외부 건축과 주변 업무지구 분위기를 보는 일정입니다. 사옥은 관광시설이 아니므로 일반 방문객의 내부 출입은 제한될 수 있습니다.<br><strong>방문 방식</strong><br>무리하게 내부 입장을 시도하지 말고 외부와 공개 공간 중심으로 짧게 본 뒤 화웨이 체험관으로 이동하세요.",
+    "d4-2": "<strong>관람 내용</strong><br>화웨이 제품과 생태계를 직접 체험하는 매장형 공간을 보는 일정입니다. 휴대폰·웨어러블·스마트 기기 등 관심 제품을 중심으로 짧게 체험하면 다음 난산 일정이 밀리지 않습니다.<br><strong>확인 사항</strong><br>방문객 개방 범위와 사전예약 필요 여부가 아직 확정되지 않았으므로 출발 전 공식 채널에서 재확인하세요.",
+    "d4-3": "<strong>후보 비교</strong><br>蟹興記는 진한 게 내장 풍미의 蟹黃麵, 泰妃殿은 여러 메뉴를 나누기 좋은 태국음식, 小炳勝은 광둥요리를 폭넓게 고르기 좋은 후보입니다. 오전 테크 일정 뒤 원하는 식사 강도와 대기시간에 따라 선택하세요.<br><strong>상태</strong><br>세 곳 모두 하이샹청 인근 후보이며 실제 방문·예약은 미정입니다.",
+    "d4-4": "<strong>체험 목표</strong><br>난산 MixC·하이샹청에서 AI 안경·통역기·드론·로봇처럼 소비자용으로 나온 기기를 직접 비교하는 구간입니다. 테크 기업 사옥 외관을 보는 오전과 달리, 일상에서 바로 쓰이는 AI 단말을 만져보는 데 초점을 둡니다.<br><strong>현장 운영</strong><br>특정 브랜드·데모 기기는 재고와 매장 정책에 따라 달라질 수 있으므로, 입구에서 AI 안경·실시간 통역·드론 데모 가능 여부를 먼저 물어보세요.",
+    "d4-5": "<strong>로보택시 체험</strong><br>난산·첸하이 권역에서 Pony.ai 등 무인주행 택시가 실제 도로를 주행하는 생활형 AI 체험입니다. 일반 택시 대체가 아니라 짧은 체험 구간을 우선하고, 안전요원·원격지원 등 차량 운영 방식을 함께 관찰하세요.<br><strong>실행 조건</strong><br>직접 호출은 중국 앱·실명·결제·블루투스 잠금 절차가 필요할 수 있습니다. 호출이 막히면 예약/결제를 시도하지 말고 MixC 체험 시간을 연장합니다.",
+    "d4-6": "<strong>드론배달·야경</strong><br>인재공원은 선전만 스카이라인과 함께 미단(Meituan) 드론배송을 일상 서비스로 볼 수 있는 후보 장소입니다. 앱에서 공원 수령지가 노출되면 음료나 간식을 주문해 지정함에서 수령하고, 불가하면 드론 관찰·수변 산책으로 대체하세요.<br><strong>주의</strong><br>수령 서비스는 날씨·당일 운영·중국 앱/결제 조건에 따라 달라집니다. 라이트쇼는 19시경 계획이나 행사·날씨에 따라 변동될 수 있습니다.",
+    "d4-7": "<strong>어떤 곳인가요?</strong><br>Sea World는 명화륜을 중심으로 식당·바·광장이 모인 셔커우의 야간 산책 권역입니다. 생활형 AI 체험 후 늦은 저녁과 야경으로 마무리하는 코스에 가깝습니다.<br><strong>일정 조절</strong><br>로보택시 또는 드론배달이 지연되면 Sea World 산책 시간을 줄이고 저녁 식사를 우선하세요. 식당은 아직 후보이며 예약·방문은 미정입니다.",
+    "d5-2": "<strong>어떤 곳인가요?</strong><br>OCT-LOFT는 옛 공장지대를 문화·예술 공간으로 바꾼 선전의 창의문화단지입니다. 낮은 건물 사이 골목, 카페, 서점, 갤러리를 천천히 둘러보는 곳이라 Day5 완급조절 일정에 맞습니다.<br><strong>방문 팁</strong><br>단지 입장은 무료지만 개별 전시 운영은 다를 수 있습니다. OCAT은 화~일 10:00~17:30(월요일 휴관)로 확인했으며 방문일(10/13 화)은 정상 운영일입니다. 입장료는 상설전 무료/특별전 유료로 갈릴 수 있어 방문 전날 공식 채널에서 확인하세요.",
+    "d5-3": "<strong>후보 비교</strong><br>Tequilazo는 멕시칸 메뉴로 식사를 확실히 하고 싶을 때, Foobar는 카페·바 분위기와 가벼운 식사를 함께 즐기고 싶을 때 적합한 후보입니다. 단지 안의 客家菜·簡餐 매장은 현장에서 분위기를 보고 유연하게 고르는 대안입니다.<br><strong>상태</strong><br>모두 미확정이므로 전시 관람 동선과 당일 영업 매장을 보고 결정하세요.",
+    "d5-6": "<strong>추천 이유</strong><br>唐阁 Tang Court는 랭함 호텔 안에서 이동 부담 없이 신혼여행 마지막 선전 저녁을 파인다이닝으로 마무리하는 후보입니다. 정통 광둥요리를 차분히 즐기는 목적형 식사이며, 대안인 秀·Silk(뷔페)는 시간과 메뉴 선택이 더 자유롭습니다.<br><strong>예약 정보</strong><br>唐阁은 사전예약을 권장하며 전화 +86-755-8828-9888 내선 8923 또는 이메일 tlszx.tangcourt@langhamhotels.com로 직접 문의합니다. 스마트 캐주얼과 저녁 운영시간 17:30~22:00, 대안 Silk 디너는 17:30~21:30도 함께 확인하세요.",
+    "d6-3": "<strong>반나절 운영법</strong><br>서구룡역 도착 후 ELEMENTS몰을 중심으로 식사·카페·간단한 쇼핑만 하는 출국일 완충 일정입니다. Pak Loh Chiu Chow는 여러 조주요리를 나누는 식사, LE-TA-SU는 개인 훠궈 세트로 빠르게 먹기 좋은 후보입니다.<br><strong>시간 관리</strong><br>짐 보관 위치를 먼저 정하고 14:00경 공항 이동을 시작하세요. 쇼핑보다 항공편 체크인 여유를 우선하며 식당 대기가 길면 즉시 다른 매장으로 전환합니다."
+  };
+
+  // Reference photos for expanded detail panels — sourced from Wikimedia Commons
+  // (public domain / CC-licensed), loaded only when a detail panel is opened.
+  // Not exhaustive: only added where a stable, freely-licensed photo exists.
+  var PHOTOS = {
+    "d1-5": { src: "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Avenue%20of%20the%20Stars%20And%20the%20Tsim%20Sha%20Tsui%20Promenade...%20%2819424936394%29.jpg?width=800", caption: "침사추이 프롬나드 · Avenue of the Stars", credit: "Bernard Spragg. NZ, CC0, Wikimedia Commons", creditUrl: "https://commons.wikimedia.org/wiki/File:The_Avenue_of_the_Stars_And_the_Tsim_Sha_Tsui_Promenade..._(19424936394).jpg" },
+    "d1-6": { src: "https://commons.wikimedia.org/wiki/Special:FilePath/Skyline%20and%20Victoria%20Harbour%20at%20night%2C%20view%20from%20Victoria%20Peak%2C%20Hong%20Kong%2C%20China%20-%20%E9%A6%99%E6%B8%AF%EF%BC%8C%E4%B8%AD%E5%9B%BD%20%2819863406821%29.jpg?width=800", caption: "빅토리아항 야경(심포니 오브 라이트 조망)", credit: "Юрий Д.К., CC BY-SA 2.0, Wikimedia Commons", creditUrl: "https://commons.wikimedia.org/wiki/File:Skyline_and_Victoria_Harbour_at_night,_view_from_Victoria_Peak,_Hong_Kong,_China_-_%E9%A6%99%E6%B8%AF%EF%BC%8C%E4%B8%AD%E5%9B%BD_(19863406821).jpg" },
+    "d1-7": { src: "https://commons.wikimedia.org/wiki/Special:FilePath/D%27Aguilar%20Street%20restaurants%2027-12-2023.jpg?width=800", caption: "센트럴 소호 바 거리(D'Aguilar Street)", credit: "LN9267, CC BY-SA 4.0, Wikimedia Commons", creditUrl: "https://commons.wikimedia.org/wiki/File:D%27Aguilar_Street_restaurants_27-12-2023.jpg" },
+    "d2-2": { src: "https://commons.wikimedia.org/wiki/Special:FilePath/Ap%20Liu%20Street%20in%20Shamshuipo.jpg?width=800", caption: "삼수이포 압리우 스트리트 전자상가 거리", credit: "Jerry Crimson Mann, CC BY-SA/GFDL, Wikimedia Commons", creditUrl: "https://commons.wikimedia.org/wiki/File:Ap_Liu_Street_in_Shamshuipo.jpg" },
+    "d2-5": { src: "https://commons.wikimedia.org/wiki/Special:FilePath/Victoria%20Peak%2C%20Hong%20Kong.jpg?width=800", caption: "빅토리아 피크 · 피크트램", credit: "Christopher, CC BY 2.0, Wikimedia Commons", creditUrl: "https://commons.wikimedia.org/wiki/File:Victoria_Peak,_Hong_Kong.jpg" },
+    "d3-5": { src: "https://commons.wikimedia.org/wiki/Special:FilePath/%E5%8D%8E%E5%BC%BA%E7%94%B5%E5%AD%90%E4%B8%96%E7%95%8C%201.jpg?width=800", caption: "화창베이 전자상가(华强电子世界)", credit: "Mx. Granger, CC0, Wikimedia Commons", creditUrl: "https://commons.wikimedia.org/wiki/File:%E5%8D%8E%E5%BC%BA%E7%94%B5%E5%AD%90%E4%B8%96%E7%95%8C_1.jpg" },
+    "d3-7": { src: "https://commons.wikimedia.org/wiki/Special:FilePath/%E4%BA%91%E9%99%85%E8%A7%82%E5%85%89%E5%B1%82%202019%20-%2011.jpg?width=800", caption: "Free Sky 전망대(116층)에서 본 선전 일몰", credit: "Mx. Granger, CC0, Wikimedia Commons", creditUrl: "https://commons.wikimedia.org/wiki/File:%E4%BA%91%E9%99%85%E8%A7%82%E5%85%89%E5%B1%82_2019_-_11.jpg" },
+    "d4-1": { src: "https://commons.wikimedia.org/wiki/Special:FilePath/Tencent_binghai_building202012.jpg?width=800", caption: "텐센트 빈하이 빌딩(사옥)", credit: "Charlie fong, CC BY-SA 4.0, Wikimedia Commons", creditUrl: "https://commons.wikimedia.org/wiki/File:Tencent_binghai_building202012.jpg" },
+    "d4-2": { src: "https://commons.wikimedia.org/wiki/Special:FilePath/Huawei%201.JPG?width=800", caption: "화웨이 사옥(선전)", credit: "Brücke-Osteuropa, Public domain, Wikimedia Commons", creditUrl: "https://commons.wikimedia.org/wiki/File:Huawei_1.JPG" },
+    "d4-4": { src: "https://commons.wikimedia.org/wiki/Special:FilePath/20201112%20The%20Shenzhen%20Bay%20MixC.jpg?width=800", caption: "선전만 MixC 쇼핑몰", credit: "Windmemories, CC BY-SA 4.0, Wikimedia Commons", creditUrl: "https://commons.wikimedia.org/wiki/File:20201112_The_Shenzhen_Bay_MixC.jpg" },
+    "d4-6": { src: "https://commons.wikimedia.org/wiki/Special:FilePath/20201112%20The%20skyline%20at%20Shenzhen%20Bay.jpg?width=800", caption: "인재공원(人才公园) 호수와 선전만 스카이라인", credit: "Windmemories, CC BY-SA 4.0, Wikimedia Commons", creditUrl: "https://commons.wikimedia.org/wiki/File:20201112_The_skyline_at_Shenzhen_Bay.jpg" },
+    "d4-7": { src: "https://commons.wikimedia.org/wiki/Special:FilePath/Sea%20World%20in%20Shekou%20Shenzhen2021.jpg?width=800", caption: "셔커우 Sea World(명화륜 선박 광장)", credit: "Charlie fong, CC BY-SA 4.0, Wikimedia Commons", creditUrl: "https://commons.wikimedia.org/wiki/File:Sea_World_in_Shekou_Shenzhen2021.jpg" },
+    "d5-2": { src: "https://commons.wikimedia.org/wiki/Special:FilePath/OCT%20LOFT%2C%20SHENZHEN%20%287%29.jpg?width=800", caption: "OCT-LOFT 창의문화단지", credit: "Dinkun Chen, CC BY-SA 4.0, Wikimedia Commons", creditUrl: "https://commons.wikimedia.org/wiki/File:OCT_LOFT,_SHENZHEN_(7).jpg" },
+    "d6-3": { src: "https://commons.wikimedia.org/wiki/Special:FilePath/Atrium%20of%20the%20Water%20Zone%202024.JPG?width=800", caption: "ELEMENTS몰(圆方) 내부", credit: "Fotointheworld, CC BY-SA, Wikimedia Commons", creditUrl: "https://commons.wikimedia.org/wiki/File:Atrium_of_the_Water_Zone_2024.JPG" }
+  };
+
+  function commonsPhoto(src, caption, license) {
+    // Wikimedia's FilePath endpoint has been more reliable than direct thumbnail hosts in file:// viewing.
+    if (src.indexOf("https://thumb.wikimedia.org/") === 0) {
+      src = "https://commons.wikimedia.org/wiki/Special:FilePath/" + src.split("/960px-").pop() + "?width=800";
+    }
+    return { src: src, caption: caption, credit: "Wikimedia Commons · " + license, creditUrl: src };
+  }
+
+  // Restaurant-candidate panels use two explicitly labelled references: venue atmosphere and signature dish.
+  // They are illustrative unless the caption names the exact candidate; candidates remain unconfirmed.
+  var FOOD_PHOTOS = {
+    "d1-4": [
+      commonsPhoto("https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d3/Fortune_Hong_Kong_Seafood_Restaurant_05.jpg/960px-Fortune_Hong_Kong_Seafood_Restaurant_05.jpg", "홍콩 해산물 식당 외관 참고", "CC BY-SA 4.0"),
+      commonsPhoto("https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d3/Seafood_by_peach_yeung_2020621.jpg/960px-Seafood_by_peach_yeung_2020621.jpg", "대표 메뉴 참고: 해산물 요리", "CC BY-SA 4.0")
+    ],
+    "d2-1": [
+      commonsPhoto("https://thumb.wikimedia.org/wikipedia/commons/thumb/8/87/HK_%E4%B8%AD%E7%92%B0_Central_%E9%A6%99%E6%B8%AF%E5%A4%A7%E6%9C%83%E5%A0%82_City_Hall_lower_block_%E7%BE%8E%E5%BF%83%E7%9A%87%E5%AE%AE_Maxim%27s_Palace_Chinese_Restaurant_Dec_2018_SSG_02.jpg/960px-HK_%E4%B8%AD%E7%92%B0_Central_%E9%A6%99%E6%B8%AF%E5%A4%A7%E6%9C%83%E5%A0%82_City_Hall_lower_block_%E7%BE%8E%E5%BF%83%E7%9A%87%E5%AE%AE_Maxim%27s_Palace_Chinese_Restaurant_Dec_2018_SSG_02.jpg", "Maxim’s Palace City Hall 외관", "CC BY-SA 4.0"),
+      commonsPhoto("https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f6/Dim_Sum_Breakfast.jpg/960px-Dim_Sum_Breakfast.jpg", "대표 메뉴: 딤섬", "CC0")
+    ],
+    "d2-3": [
+      commonsPhoto("https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8e/Po_Kee_Hong_Kong_Style_Cart_Noodle_Shop_in_Tuen_Mun.jpg/960px-Po_Kee_Hong_Kong_Style_Cart_Noodle_Shop_in_Tuen_Mun.jpg", "홍콩식 국수 전문점 분위기 참고", "CC BY-SA 4.0"),
+      commonsPhoto("https://thumb.wikimedia.org/wikipedia/commons/thumb/6/60/A_Lo_mein_with_shrimp_roe_at_Ho_To_Tai_Chinese_Noodle_Shop.jpg/960px-A_Lo_mein_with_shrimp_roe_at_Ho_To_Tai_Chinese_Noodle_Shop.jpg", "대표 메뉴: 새우알 비빔면", "CC BY-SA 4.0")
+    ],
+    "d2-4": [
+      commonsPhoto("https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d3/Dai_pai_dong_Central.jpg/960px-Dai_pai_dong_Central.jpg", "홍콩식 다이파이동·간식점 분위기 참고", "CC BY-SA 3.0"),
+      commonsPhoto("https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e3/Tofu-fa_pudding_stop%2C_Lamma_%2850562672317%29.jpg/960px-Tofu-fa_pudding_stop%2C_Lamma_%2850562672317%29.jpg", "대표 메뉴: 두부화", "CC BY-SA 2.0")
+    ],
+    "d2-6": [
+      commonsPhoto("https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d3/Dai_pai_dong_Central.jpg/960px-Dai_pai_dong_Central.jpg", "소호 광둥식 식당가 분위기 참고", "CC BY-SA 3.0"),
+      commonsPhoto("https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d3/Seafood_by_peach_yeung_2020621.jpg/960px-Seafood_by_peach_yeung_2020621.jpg", "대표 메뉴 참고: 해산물 요리 (게찜은 사전주문)", "CC BY-SA 4.0")
+    ],
+    "d3-4": [
+      commonsPhoto("https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9e/SZ_%E6%B7%B1%E5%9C%B3_Shenzhen_%E9%BE%8D%E5%B4%97_Longgang_The_RestFul_Food_Court_%E9%A3%9F%E7%89%A9%E5%A1%94_food_March_2025_R12S.jpg/960px-SZ_%E6%B7%B1%E5%9C%B3_Shenzhen_%E9%BE%8D%E5%B4%97_Longgang_The_RestFul_Food_Court_%E9%A3%9F%E7%89%A9%E5%A1%94_food_March_2025_R12S.jpg", "선전 푸드코트 분위기 참고", "CC0"),
+      commonsPhoto("https://thumb.wikimedia.org/wikipedia/commons/thumb/9/94/Chaoshan_Beef_Hot_Pot_at_Baheli_Haiji%2C_ZGC1_%2820221003132726%29.jpg/960px-Chaoshan_Beef_Hot_Pot_at_Baheli_Haiji%2C_ZGC1_%2820221003132726%29.jpg", "대표 메뉴: 차오산 소고기 훠궈", "CC BY-SA 4.0")
+    ],
+    "d3-6": [
+      commonsPhoto("https://thumb.wikimedia.org/wikipedia/commons/thumb/7/72/%E6%9C%9D%E5%B7%9E%E5%BC%8F%E9%B1%BC%E5%A4%B4%E9%94%85_Teochew_Fish_Hotpot_-_Yum_Cha_Inn_%282929645779%29.jpg/960px-%E6%9C%9D%E5%B7%9E%E5%BC%8F%E9%B1%BC%E5%A4%B4%E9%94%85_Teochew_Fish_Hotpot_-_Yum_Cha_Inn_%282929645779%29.jpg", "중식 훠궈 식당 분위기 참고", "CC BY-SA 2.0"),
+      commonsPhoto("https://thumb.wikimedia.org/wikipedia/commons/thumb/5/54/%E9%85%B8%E8%8F%9C%E9%B1%BC_Preserved_Mustard_Green_with_Fish_-_Charming_Spice_AUD24.80_%284104355401%29.jpg/960px-%E9%85%B8%E8%8F%9C%E9%B1%BC_Preserved_Mustard_Green_with_Fish_-_Charming_Spice_AUD24.80_%284104355401%29.jpg", "대표 메뉴: 쏸차이위", "CC BY-SA 2.0")
+    ],
+    "d4-3": [
+      commonsPhoto("https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7d/A_SUSHIRO_RESTAURANT_IN_SHENZHEN_MIXC.jpg/960px-A_SUSHIRO_RESTAURANT_IN_SHENZHEN_MIXC.jpg", "선전 MixC 식당가 분위기 참고", "CC BY-SA 4.0"),
+      commonsPhoto("https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e4/%E8%8B%8F%E5%B7%9E%E8%9F%B9%E7%B2%89%E9%9D%A2.jpg/960px-%E8%8B%8F%E5%B7%9E%E8%9F%B9%E7%B2%89%E9%9D%A2.jpg", "대표 메뉴 참고: 게살·게내장 국수", "CC BY 4.0")
+    ],
+    "d4-7": [
+      commonsPhoto("https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6a/Sea_World_in_Shekou_Shenzhen2021.jpg/960px-Sea_World_in_Shekou_Shenzhen2021.jpg", "셔커우 Sea World 식당가", "CC BY-SA 4.0"),
+      commonsPhoto("https://thumb.wikimedia.org/wikipedia/commons/thumb/0/08/Omakase_sushi_%E2%80%94_where_chef_brings_you_the_best_in_season%2C_piece_by_piece.jpg/960px-Omakase_sushi_%E2%80%94_where_chef_brings_you_the_best_in_season%2C_piece_by_piece.jpg", "대표 메뉴: 오마카세 스시", "CC BY-SA 4.0")
+    ],
+    "d5-3": [
+      commonsPhoto("https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3f/OCT_LOFT%2C_SHENZHEN_%287%29.jpg/960px-OCT_LOFT%2C_SHENZHEN_%287%29.jpg", "OCT-LOFT 카페·식당가 분위기 참고", "CC BY-SA 4.0"),
+      commonsPhoto("https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6a/Mexican_Food_and_Drinks.jpg/960px-Mexican_Food_and_Drinks.jpg", "대표 메뉴: 멕시칸 플레이트", "CC0")
+    ],
+    "d5-6": [
+      commonsPhoto("https://thumb.wikimedia.org/wikipedia/commons/thumb/8/87/HK_%E4%B8%AD%E7%92%B0_Central_%E9%A6%99%E6%B8%AF%E5%A4%A7%E6%9C%83%E5%A0%82_City_Hall_lower_block_%E7%BE%8E%E5%BF%83%E7%9A%87%E5%AE%AE_Maxim%27s_Palace_Chinese_Restaurant_Dec_2018_SSG_02.jpg/960px-HK_%E4%B8%AD%E7%92%B0_Central_%E9%A6%99%E6%B8%AF%E5%A4%A7%E6%9C%83%E5%A0%82_City_Hall_lower_block_%E7%BE%8E%E5%BF%83%E7%9A%87%E5%AE%AE_Maxim%27s_Palace_Chinese_Restaurant_Dec_2018_SSG_02.jpg", "광둥식 파인다이닝 분위기 참고", "CC BY-SA 4.0"),
+      commonsPhoto("https://thumb.wikimedia.org/wikipedia/commons/thumb/7/74/Dim_sum_collection_in_Cantonese_restaurant.jpg/960px-Dim_sum_collection_in_Cantonese_restaurant.jpg", "대표 메뉴: 광둥식 딤섬", "CC BY-SA 4.0")
+    ],
+    "d6-3": [
+      commonsPhoto("https://thumb.wikimedia.org/wikipedia/commons/thumb/0/00/Chiu_Chow_Garden_in_Uptown_Plaza_2016.jpg/960px-Chiu_Chow_Garden_in_Uptown_Plaza_2016.jpg", "조주식 식당 외관 참고", "CC BY 4.0"),
+      commonsPhoto("https://thumb.wikimedia.org/wikipedia/commons/thumb/5/51/Hong_Kong_hot_pot_19_Dec_2008.jpg/960px-Hong_Kong_hot_pot_19_Dec_2008.jpg", "대표 메뉴: 홍콩식 훠궈", "CC BY-SA 2.0")
+    ]
+  };
+
+  var LOCAL_PLACES = {
+    "d1-3": { label: "숙소", text: "香港港岛海逸君绰酒店\n香港北角油街23号", query: "香港港岛海逸君绰酒店 北角油街23号", city: "香港" },
+    "d1-4": { label: "저녁 후보", text: "Fisholic\nGood Luck Dai Pai Dong", query: "Fisholic Fortress Hill Hong Kong", city: "香港" },
+    "d1-5": { label: "관람 장소", text: "尖沙咀海滨长廊", query: "尖沙咀海滨长廊", city: "香港" },
+    "d1-7": { label: "바 거리", text: "中环苏豪区", query: "中环苏豪区", city: "香港" },
+    "d2-1": { label: "식당", text: "美心皇宫 大会堂", query: "美心皇宫 大会堂", city: "香港" },
+    "d2-2": { label: "시장", text: "深水埗鸭寮街", query: "深水埗鸭寮街", city: "香港" },
+    "d2-3": { label: "점심 후보", text: "刘森记面家\n爱文生", query: "刘森记面家 深水埗", city: "香港" },
+    "d2-4": { label: "간식", text: "公和荳品厂", query: "公和荳品厂 深水埗", city: "香港" },
+    "d2-5": { label: "관광지", text: "太平山顶\n山顶缆车", query: "太平山顶 山顶缆车", city: "香港" },
+    "d2-6": { label: "저녁 후보", text: "大班楼 The Chairman\n何里活 Ho Lee Fook\nNeighborhood", query: "大班楼 香港", city: "香港" },
+    "d3-1": { label: "출발역", text: "香港西九龙站", query: "香港西九龙站", city: "香港" },
+    "d3-2": { label: "도착역", text: "福田站", query: "福田站", city: "深圳" },
+    "d3-3": { label: "숙소", text: "深圳东海朗廷酒店\n深圳市福田区深南大道7888号", query: "深圳东海朗廷酒店 深南大道7888号", city: "深圳" },
+    "d3-5": { label: "전자상가", text: "华强北", query: "华强北", city: "深圳" },
+    "d3-6": { label: "저녁 후보", text: "润园四季椰子鸡 COCO Park\n太二酸菜鱼 COCO Park", query: "润园四季椰子鸡 COCO Park 深圳", city: "深圳" },
+    "d3-7": { label: "전망대", text: "平安金融中心 云际观光层", query: "平安金融中心 云际观光层", city: "深圳" },
+    "d4-1": { label: "테크 기업", text: "腾讯滨海大厦", query: "腾讯滨海大厦", city: "深圳" },
+    "d4-2": { label: "체험관", text: "华为智能生活馆 南山", query: "华为智能生活馆 南山", city: "深圳" },
+    "d4-4": { label: "AI 기기 체험", text: "深圳湾万象城\n海岸城", query: "深圳湾万象城 AI眼镜 无人机", city: "深圳" },
+    "d4-5": { label: "로보택시", text: "前海 无人驾驶出租车", query: "前海 无人驾驶出租车", city: "深圳" },
+    "d4-6": { label: "드론배달·야경", text: "深圳人才公园\n美团无人机", query: "深圳人才公园 美团无人机", city: "深圳" },
+    "d4-7": { label: "저녁·야경", text: "海上世界", query: "海上世界 深圳", city: "深圳" },
+    "d5-2": { label: "문화단지", text: "华侨城创意文化园 OCT-LOFT", query: "华侨城创意文化园 OCT-LOFT", city: "深圳" },
+    "d5-6": { label: "식당", text: "唐阁 深圳东海朗廷酒店", query: "唐阁 深圳东海朗廷酒店", city: "深圳" },
+    "d6-1": { label: "출발역", text: "福田站", query: "福田站", city: "深圳" },
+    "d6-3": { label: "자유 일정", text: "圆方商场 ELEMENTS\n白鹭湖 潮州菜\nLE-TA-SU", query: "圆方商场 ELEMENTS 香港", city: "香港" },
+    "d6-4": { label: "공항", text: "香港国际机场", query: "香港国际机场", city: "香港" }
+  };
+
+  var DAY_DATES = { d1: "2026-10-09", d2: "2026-10-10", d3: "2026-10-11", d4: "2026-10-12", d5: "2026-10-13", d6: "2026-10-14" };
+  var EMERGENCY = [
+    { title: "홍콩 긴급통합", number: "999", note: "경찰·소방·구급. 말하기/청각 곤란 시 SMS 992.", tel: "999" },
+    { title: "중국 경찰", number: "110", note: "분실·범죄·신변 위협. 중문 주소를 먼저 제시하세요.", tel: "110" },
+    { title: "중국 구급 / 소방", number: "120 / 119", note: "의료 응급은 120, 화재·구조는 119. 통화 전 주변 중국어 가능자에게 도움 요청.", tel: "120" },
+    { title: "중국 교통사고", number: "122", note: "교통사고 신고. 현장 사진과 차량번호를 확보하세요.", tel: "122" },
+    { title: "주홍콩 대한민국 총영사관", number: "+852 9731 0092", note: "24시간 긴급전화. 일반 대표전화 +852 2529 4141.", tel: "+85297310092" },
+    { title: "주광저우 대한민국 총영사관", number: "+86 139 2247 3457", note: "선전 관할 24시간 긴급연락. 일반 대표전화 +86 20 2919 2999.", tel: "+8613922473457" },
+    { title: "영사안전콜센터", number: "+82 2 3210 0404", note: "외교부 해외 사건·사고 영사상담 24시간.", tel: "+82232100404" },
+    { title: "재외국민 응급의료상담", number: "+82 44 320 0119", note: "소방청 한국어 응급의료상담.", tel: "+82443200119" }
+  ];
+
+  function localDateParts(date) {
+    var parts = new Intl.DateTimeFormat("en-US", { timeZone: "Asia/Hong_Kong", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).formatToParts(date);
+    var out = {};
+    parts.forEach(function (p) { out[p.type] = p.value; });
+    return { date: out.year + "-" + out.month + "-" + out.day, minutes: Number(out.hour) * 60 + Number(out.minute) };
+  }
+
+  function scheduleState(day) {
+    var now = localDateParts(new Date(window.__TRIP_TEST_NOW__ || Date.now()));
+    if (now.date !== DAY_DATES[day.id]) return { current: -1, next: -1 };
+    var current = -1, next = -1;
+    day.items.forEach(function (item, i) {
+      var pair = item.time.split(":");
+      var minutes = Number(pair[0]) * 60 + Number(pair[1]);
+      if (minutes <= now.minutes) current = i;
+      else if (next === -1) next = i;
+    });
+    return { current: current, next: next };
+  }
+
+  function loadChecks() {
+    try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; }
+    catch (e) { return {}; }
+  }
+  var checks = loadChecks();
+  function saveChecks() {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(checks)); } catch (e) {}
+  }
+
+  var fmt = function (n) { return "₩" + n.toLocaleString("ko-KR"); };
+
+  function photoHTML(key) {
+    var base = PHOTOS[key];
+    var food = FOOD_PHOTOS[key];
+    if (!base && !food) return "";
+    var photos = [];
+    if (base) photos.push(base);
+    if (food) photos = photos.concat(Array.isArray(food) ? food : [food]);
+    var figures = photos.map(function (p) {
+      return '<figure class="detail-photo" data-photo="' + key + '">' +
+        '<img src="' + p.src + '" alt="' + p.caption + '" loading="lazy" referrerpolicy="no-referrer" ' +
+        'onerror="this.closest(\'.detail-photo\').classList.add(\'photo-error\')">' +
+        '<figcaption>' + p.caption + ' · <a href="' + p.creditUrl + '" target="_blank" rel="noopener">' + p.credit + '</a></figcaption>' +
+        '</figure>';
+    }).join("");
+    return photos.length > 1 ? '<div class="detail-photo-set">' + figures + '</div>' : figures;
+  }
+
+  function badgeHTML(cls, text) { return '<span class="badge ' + cls + '">' + text + "</span>"; }
+
+  function placeToolsHTML(key) {
+    var place = LOCAL_PLACES[key];
+    if (!place) return "";
+    var google = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(place.query);
+    var amap = "https://uri.amap.com/search?keyword=" + encodeURIComponent(place.query) + "&city=" + encodeURIComponent(place.city) + "&view=map&src=szhk-trip&callnative=1";
+    return '<div class="place-tools screen-only"><button class="utility-btn copy-place" type="button" data-place="' + key + '">' + place.label + ' 중문 복사</button>' +
+      '<a class="place-link" href="' + google + '" target="_blank" rel="noopener">Google 지도</a>' +
+      '<a class="place-link" href="' + amap + '" target="_blank" rel="noopener">가오더 지도</a></div>';
+  }
+
+  function copyPlace(key, btn) {
+    var text = LOCAL_PLACES[key].text;
+    function done() {
+      btn.textContent = "복사 완료";
+      document.getElementById("globalStatus").textContent = "현지어 장소명을 복사했습니다.";
+      setTimeout(function () { btn.textContent = LOCAL_PLACES[key].label + " 중문 복사"; }, 1800);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(function () { fallbackCopy(text, done); });
+    } else fallbackCopy(text, done);
+  }
+
+  function fallbackCopy(text, done) {
+    var input = document.createElement("textarea");
+    input.value = text; input.setAttribute("readonly", ""); input.style.position = "fixed"; input.style.opacity = "0";
+    document.body.appendChild(input); input.select(); document.execCommand("copy"); document.body.removeChild(input); done();
+  }
+  function mapEmbedHTML(points, label) {
+    var origin = encodeURIComponent(points[0]);
+    var dest = encodeURIComponent(points[points.length - 1]);
+    var waypoints = points.slice(1, -1).map(encodeURIComponent);
+    var daddr = waypoints.concat([dest]).join("+to:");
+    var src = "https://maps.google.com/maps?saddr=" + origin + "&daddr=" + daddr + "&output=embed";
+    return '<div class="route-map">' + (label ? '<span class="route-map-title">' + label + '</span>' : "") +
+      '<iframe src="' + src + '" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="' + (label || "이동 경로 지도") + '"></iframe></div>';
+  }
+
+  function renderTabs(activeId) {
+    tabsEl.innerHTML = "";
+    TRIP.days.forEach(function (d) {
+      var done = d.items.filter(function (it, i) { return checks[d.id + "-" + i]; }).length;
+      var b = document.createElement("button");
+      b.className = "tab"; b.type = "button";
+      b.setAttribute("role", "tab");
+      b.setAttribute("aria-selected", d.id === activeId ? "true" : "false");
+      b.innerHTML =
+        '<span class="d">' + d.tab + " · " + d.tabSub + "</span>" +
+        '<span class="t">' + d.title.split("—")[0].trim() + "</span>" +
+        '<span class="prog">' + done + "/" + d.items.length + "</span>";
+      b.addEventListener("click", function () { showDay(d.id); });
+      tabsEl.appendChild(b);
+    });
+  }
+
+  function showDay(id) {
+    var d = TRIP.days.find(function (x) { return x.id === id; }) || TRIP.days[0];
+    renderTabs(d.id);
+    var h = "";
+    h += '<div class="day-head"><h2>' + d.tab + " · " + d.title + '</h2>' +
+         '<span class="city-tag" style="background:' + (ACCENT[d.city === "both" ? "hk" : d.city === "szhk" ? "sz" : d.city === "kr" ? "common" : d.city]) + '">' +
+         CITY_NAME[d.city] + "</span></div>";
+    if (d.note) h += '<div class="day-note"><b>메모</b><span>' + d.note + "</span></div>";
+    if (d.confirmed) h += '<div class="day-note" style="border:1px solid color-mix(in srgb, var(--done) 35%, var(--border));background:color-mix(in srgb, var(--done) 7%, var(--surface-2))"><b>확정</b><span>2026-09-02 확정안 — OCT-LOFT 완급조절</span></div>';
+    if (d.route && d.route.length) {
+      h += '<div class="route"><span class="r-label">이동 경로</span>' +
+        d.route.map(function (p) { return '<span class="r-point">' + p + '</span>'; }).join('<span class="r-arrow">→</span>') +
+        '</div>';
+    }
+    if (d.mapGroups && d.mapGroups.length) {
+      h += d.mapGroups.map(function (group) { return mapEmbedHTML(group.points, group.label); }).join("");
+    } else if (d.mapPoints && d.mapPoints.length >= 2) {
+      h += mapEmbedHTML(d.mapPoints);
+    }
+    if (Object.keys(DETAILS).some(function (key) { return key.indexOf(d.id + "-") === 0; })) {
+      h += '<div class="day-tools screen-only"><button class="utility-btn expand-all" type="button">상세 모두 펼치기</button><button class="utility-btn collapse-all" type="button">상세 모두 숨기기</button></div>';
+    }
+    var state = scheduleState(d);
+    h += '<ul class="tl">';
+    d.items.forEach(function (it, i) {
+      var key = d.id + "-" + i;
+      var detail = DETAILS[key];
+      var detailId = "detail-" + key;
+      var stateClass = i === state.current ? " current" : i === state.next ? " next" : "";
+      var stateBadge = i === state.current ? '<span class="schedule-state current">현재</span>' : i === state.next ? '<span class="schedule-state next">다음</span>' : "";
+      h += '<li class="slot' + (checks[key] ? " done" : "") + stateClass + '" id="slot-' + key + '">' +
+        '<span class="time">' + it.time + "</span>" +
+        '<div class="card"><div class="act">' +
+        '<button class="check" type="button" role="checkbox" aria-checked="' + (checks[key] ? "true" : "false") +
+        '" aria-label="' + it.title + ' 완료" data-key="' + key + '"></button>' +
+        '<div class="body"><div class="title">' + it.title + stateBadge + "</div>" +
+        (it.desc ? '<div class="desc">' + it.desc + "</div>" : "") +
+        (detail
+          ? '<button class="detail-toggle" type="button" aria-expanded="false" aria-controls="' + detailId + '" data-detail="' + detailId + '">상세 설명 펼치기</button>' +
+            '<div class="details" id="' + detailId + '" hidden>' + photoHTML(key) + '<div class="detail-copy">' + detail + "</div></div>"
+          : "") + placeToolsHTML(key);
+      if (it.badges) {
+        h += '<div class="badges">' + it.badges.map(function (bd) {
+          return badgeHTML(bd[0], bd[1]);
+        }).join("") + "</div>";
+      }
+      h += "</div></div></div></li>";
+    });
+    h += "</ul>";
+    if (d.stay) h += '<div class="stay"><b>숙박</b><span>' + d.stay + "</span></div>";
+    main.innerHTML = h;
+
+    Array.prototype.forEach.call(main.querySelectorAll(".check"), function (btn) {
+      btn.addEventListener("click", function () {
+        var key = btn.getAttribute("data-key");
+        checks[key] = !checks[key];
+        saveChecks();
+        btn.setAttribute("aria-checked", checks[key] ? "true" : "false");
+        var li = document.getElementById("slot-" + key);
+        if (li) li.classList.toggle("done", !!checks[key]);
+        renderTabs(d.id);
+      });
+    });
+
+    Array.prototype.forEach.call(main.querySelectorAll(".detail-toggle"), function (btn) {
+      btn.addEventListener("click", function () {
+        var panel = document.getElementById(btn.getAttribute("data-detail"));
+        var expanded = btn.getAttribute("aria-expanded") === "true";
+        btn.setAttribute("aria-expanded", expanded ? "false" : "true");
+        btn.textContent = expanded ? "상세 설명 펼치기" : "상세 설명 숨기기";
+        panel.hidden = expanded;
+      });
+    });
+
+    Array.prototype.forEach.call(main.querySelectorAll(".copy-place"), function (btn) {
+      btn.addEventListener("click", function () { copyPlace(btn.getAttribute("data-place"), btn); });
+    });
+
+    function setAllDetails(expanded) {
+      Array.prototype.forEach.call(main.querySelectorAll(".detail-toggle"), function (btn) {
+        var panel = document.getElementById(btn.getAttribute("data-detail"));
+        btn.setAttribute("aria-expanded", expanded ? "true" : "false");
+        btn.textContent = expanded ? "상세 설명 숨기기" : "상세 설명 펼치기";
+        panel.hidden = !expanded;
+      });
+    }
+    var expandAll = main.querySelector(".expand-all");
+    var collapseAll = main.querySelector(".collapse-all");
+    if (expandAll) expandAll.addEventListener("click", function () { setAllDetails(true); });
+    if (collapseAll) collapseAll.addEventListener("click", function () { setAllDetails(false); });
+  }
+
+  /* bookings chips */
+  (function () {
+    var chips = [
+      ["ok", "항공 홍콩익스프레스 왕복 — 결제완료"],
+      ["ok", "홍콩 Harbour Grand 2박 — 결제완료"],
+      ["hold", "선전 The Langham 3박 — 예약완료·현장결제"],
+      ["todo", "고속철 왕복 — 미예약"],
+      ["todo", "Free Sky / 피크트램 — 미예약"],
+      ["todo", "보험 / eSIM — 미가입"]
+    ];
+    document.getElementById("bookings").innerHTML = chips.map(function (c) {
+      return '<span class="chip"><span class="dot ' + c[0] + '"></span>' + c[1] + "</span>";
+    }).join("");
+  })();
+
+  function deadlineHTML(dateText) {
+    if (!dateText) return "";
+    var today = localDateParts(new Date(window.__TRIP_TEST_NOW__ || Date.now())).date;
+    var dayMs = 86400000;
+    var diff = Math.round((Date.parse(dateText + "T00:00:00Z") - Date.parse(today + "T00:00:00Z")) / dayMs);
+    var label = diff === 0 ? "D-DAY" : diff > 0 ? "D-" + diff : "D+" + Math.abs(diff) + " · 기한 지남";
+    var cls = diff < 0 ? " overdue" : diff <= 7 ? " soon" : "";
+    return '<span class="deadline' + cls + '" data-due="' + dateText + '">' + label + " · " + dateText.slice(5).replace("-", "/") + "</span>";
+  }
+
+  /* prep list */
+  (function () {
+    document.getElementById("prepList").innerHTML = TRIP.prep.map(function (p) {
+      return "<li><span class='when'>" + p[0] + "</span><span><b>" + p[1] + "</b><br><span style='color:var(--muted);font-size:12px'>" + p[2] + "</span><br>" + deadlineHTML(p[3]) + "</span></li>";
+    }).join("");
+  })();
+
+  /* emergency card */
+  (function () {
+    document.getElementById("emergencyGrid").innerHTML = EMERGENCY.map(function (item) {
+      return '<div class="emergency-item"><b>' + item.title + '</b><a class="number" href="tel:' + item.tel + '">' + item.number + '</a><div>' + item.note + "</div></div>";
+    }).join("");
+  })();
+
+  /* budget */
+  (function () {
+    var total = 0, paid = 0;
+    var rows = TRIP.budget.map(function (b) {
+      total += b[1]; if (b[2]) paid += b[1];
+      return '<div class="budget-row' + (b[2] ? " paid" : "") + '"><span>' + b[0] +
+        (b[3] ? ' <span style="color:var(--faint);font-size:11.5px">' + b[3] + "</span>" : "") +
+        "</span><span class='amt'>" + fmt(b[1]) + "</span></div>";
+    }).join("");
+    rows += '<div class="budget-row total"><span>총 예상 (2인)</span><span class="amt">' + fmt(total) + "</span></div>";
+    rows += '<div class="budget-row"><span style="color:var(--muted)">결제완료</span><span class="amt" style="color:var(--done)">' + fmt(paid) + "</span></div>";
+    rows += '<div class="bar"><i style="width:' + Math.round(paid / total * 100) + '%"></i></div>';
+    rows += '<div style="font-size:12px;color:var(--muted)">결제 진행률 ' + Math.round(paid / total * 100) + "% · 랭함은 체크인 시 현장결제(CNY)</div>";
+    document.getElementById("budgetBox").innerHTML = rows;
+  })();
+
+  /* printable all-days itinerary */
+  (function () {
+    document.getElementById("printAll").innerHTML = TRIP.days.map(function (day) {
+      return '<article class="print-day"><h2>' + day.tab + " · " + day.tabSub + " · " + day.title + "</h2>" +
+        day.items.map(function (item) {
+          return '<div class="print-item"><span class="print-time">' + item.time + '</span><div><b>' + item.title + '</b>' +
+            (item.desc ? '<div class="desc">' + item.desc + "</div>" : "") + "</div></div>";
+        }).join("") + (day.stay ? '<div class="stay"><b>숙박</b><span>' + day.stay + "</span></div>" : "") + "</article>";
+    }).join("");
+    document.getElementById("printBtn").addEventListener("click", function () { window.print(); });
+  })();
+
+  /* keyboard nav: ← → */
+  document.addEventListener("keydown", function (e) {
+    if (e.target && /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+    var cur = tabsEl.querySelector('[aria-selected="true"]');
+    if (!cur) return;
+    var tabs = Array.prototype.slice.call(tabsEl.querySelectorAll(".tab"));
+    var idx = tabs.indexOf(cur);
+    if (e.key === "ArrowRight" && idx < tabs.length - 1) { showDay(TRIP.days[idx + 1].id); }
+    else if (e.key === "ArrowLeft" && idx > 0) { showDay(TRIP.days[idx - 1].id); }
+  });
+
+  showDay("d1");
+})();
+</script>
+</body>
+</html>
