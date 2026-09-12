@@ -24,7 +24,7 @@
     --font-body: 'Nanum Gothic', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
   }
   @media (prefers-color-scheme: dark) {
-    :root {
+    :root:not([data-theme="light"]) {
       --bg: #201d19; --surface: #2a2620; --surface-2: #34302a;
       --ink: #ece6dc; --muted: #a1968a; --faint: #6e655a;
       --border: #3c372f; --border-strong: #4c463c;
@@ -32,6 +32,14 @@
       --done: #5db69c;
       --shadow: 0 1px 2px rgba(0,0,0,.2), 0 8px 24px rgba(0,0,0,.25);
     }
+  }
+  html[data-theme="dark"] {
+    --bg: #201d19; --surface: #2a2620; --surface-2: #34302a;
+    --ink: #ece6dc; --muted: #a1968a; --faint: #6e655a;
+    --border: #3c372f; --border-strong: #4c463c;
+    --accent-hk: #e06a5f; --accent-sz: #5db69c; --accent-common: #d0a05c;
+    --done: #5db69c;
+    --shadow: 0 1px 2px rgba(0,0,0,.2), 0 8px 24px rgba(0,0,0,.25);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
@@ -428,6 +436,10 @@
         <button type="button" id="viewPc" aria-pressed="true">🖥 PC 화면</button>
         <button type="button" id="viewMobile" aria-pressed="false">📱 모바일 화면</button>
       </div>
+      <div class="view-switch" role="group" aria-label="밝기 전환">
+        <button type="button" id="themeLight" aria-pressed="false">☀️ 밝은 화면</button>
+        <button type="button" id="themeDark" aria-pressed="false">🌙 어두운 화면</button>
+      </div>
       <button class="utility-btn" type="button" id="printBtn">전체 일정 인쇄 / PDF</button>
       <span class="copy-status" id="globalStatus" aria-live="polite"></span>
     </div>
@@ -491,6 +503,33 @@
     applyView(saved);
     btnPc.addEventListener("click", function () { applyView("pc"); });
     btnMobile.addEventListener("click", function () { applyView("mobile"); });
+  })();
+
+  /* ─── Light / Dark theme toggle ─── */
+  (function () {
+    var THEME_KEY = "szhk-trip-theme-v1";
+    var root = document.documentElement;
+    var btnLight = document.getElementById("themeLight");
+    var btnDark = document.getElementById("themeDark");
+    function applyTheme(theme) {
+      if (theme === "light" || theme === "dark") {
+        root.setAttribute("data-theme", theme);
+      } else {
+        root.removeAttribute("data-theme");
+      }
+      btnLight.setAttribute("aria-pressed", theme === "light" ? "true" : "false");
+      btnDark.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+      try { localStorage.setItem(THEME_KEY, theme); } catch (e) {}
+    }
+    var savedTheme = "system";
+    try { savedTheme = localStorage.getItem(THEME_KEY) || "system"; } catch (e) {}
+    applyTheme(savedTheme);
+    btnLight.addEventListener("click", function () {
+      applyTheme(root.getAttribute("data-theme") === "light" ? "system" : "light");
+    });
+    btnDark.addEventListener("click", function () {
+      applyTheme(root.getAttribute("data-theme") === "dark" ? "system" : "dark");
+    });
   })();
 
   var ACCENT = { hk: "var(--accent-hk)", sz: "var(--accent-sz)", common: "var(--accent-common)" };
