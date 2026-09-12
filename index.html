@@ -677,7 +677,9 @@
   var main = document.getElementById("main");
   var tabsEl = document.getElementById("tabs");
   var LS_KEY = "szhk-trip-checks-v1";
-  var DETAILS = {
+  // Source fragments are merged once into EXTRAS below. Renderers only read
+  // EXTRAS, keyed by the stable semantic activity ID.
+  var EXTRA_DETAILS = {
     "d1-dinner-northpoint": "<strong>선택 가이드</strong><br>Fisholic은 첫날 피로를 고려해 가볍게 먹기 좋은 캐주얼 시푸드 후보이고, Good Luck Dai Pai Dong은 홍콩식 노천 대폿집 분위기를 경험하기 좋은 후보입니다. 입국·체크인 시간이 밀리면 이동거리가 짧은 곳을 우선하고, 두 곳 모두 방문 직전 영업 여부와 대기시간을 확인하세요.",
     "d1-promenade": "<strong>어떤 곳인가요?</strong><br>침사추이 프롬나드는 빅토리아항 건너편 홍콩섬의 고층 빌딩을 한눈에 보는 대표 산책 구간입니다. 해 질 무렵부터 야경까지 분위기가 빠르게 바뀌므로 19:30쯤 도착하면 사진 촬영과 관람 위치 선정에 여유가 있습니다.<br><strong>방문 팁</strong><br>심포니 오브 라이트는 항구 정면 시야가 중요하므로 나무·시설물에 가리지 않는 자리를 고르세요. 비나 안개가 심하면 조명 가시성이 떨어질 수 있습니다.",
     "d1-symphony-lights": "<strong>관람 포인트</strong><br>빅토리아항 양쪽의 건물 조명과 레이저를 음악에 맞춰 구성한 야간 쇼입니다. 일정에는 매일 20:00, 약 13분으로 반영되어 있으며 쇼 자체보다 항구 전체 야경을 함께 감상하는 일정으로 생각하면 좋습니다.<br><strong>동선</strong><br>관람 후 스타페리 선착장으로 이동해 센트럴로 건너가면 다음 소호 일정과 자연스럽게 연결됩니다.",
@@ -709,7 +711,7 @@
   // Reference photos for expanded detail panels — sourced from Wikimedia Commons
   // (public domain / CC-licensed), loaded only when a detail panel is opened.
   // Not exhaustive: only added where a stable, freely-licensed photo exists.
-  var PHOTOS = {
+  var EXTRA_PHOTOS = {
     "d1-promenade": { src: "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Avenue%20of%20the%20Stars%20And%20the%20Tsim%20Sha%20Tsui%20Promenade...%20%2819424936394%29.jpg?width=800", caption: "침사추이 프롬나드 · Avenue of the Stars", credit: "Bernard Spragg. NZ, CC0, Wikimedia Commons", creditUrl: "https://commons.wikimedia.org/wiki/File:The_Avenue_of_the_Stars_And_the_Tsim_Sha_Tsui_Promenade..._(19424936394).jpg" },
     "d1-symphony-lights": { src: "https://commons.wikimedia.org/wiki/Special:FilePath/Skyline%20and%20Victoria%20Harbour%20at%20night%2C%20view%20from%20Victoria%20Peak%2C%20Hong%20Kong%2C%20China%20-%20%E9%A6%99%E6%B8%AF%EF%BC%8C%E4%B8%AD%E5%9B%BD%20%2819863406821%29.jpg?width=800", caption: "빅토리아항 야경(심포니 오브 라이트 조망)", credit: "Юрий Д.К., CC BY-SA 2.0, Wikimedia Commons", creditUrl: "https://commons.wikimedia.org/wiki/File:Skyline_and_Victoria_Harbour_at_night,_view_from_Victoria_Peak,_Hong_Kong,_China_-_%E9%A6%99%E6%B8%AF%EF%BC%8C%E4%B8%AD%E5%9B%BD_(19863406821).jpg" },
     "d1-soho-bars": { src: "https://commons.wikimedia.org/wiki/Special:FilePath/D%27Aguilar%20Street%20restaurants%2027-12-2023.jpg?width=800", caption: "센트럴 소호 바 거리(D'Aguilar Street)", credit: "LN9267, CC BY-SA 4.0, Wikimedia Commons", creditUrl: "https://commons.wikimedia.org/wiki/File:D%27Aguilar_Street_restaurants_27-12-2023.jpg" },
@@ -736,7 +738,7 @@
 
   // Restaurant-candidate panels use two explicitly labelled references: venue atmosphere and signature dish.
   // They are illustrative unless the caption names the exact candidate; candidates remain unconfirmed.
-  var FOOD_PHOTOS = {
+  var EXTRA_FOOD_PHOTOS = {
     "d1-dinner-northpoint": [
       commonsPhoto("https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d3/Fortune_Hong_Kong_Seafood_Restaurant_05.jpg/960px-Fortune_Hong_Kong_Seafood_Restaurant_05.jpg", "홍콩 해산물 식당 외관 참고", "CC BY-SA 4.0"),
       commonsPhoto("https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d3/Seafood_by_peach_yeung_2020621.jpg/960px-Seafood_by_peach_yeung_2020621.jpg", "대표 메뉴 참고: 해산물 요리", "CC BY-SA 4.0")
@@ -787,7 +789,7 @@
     ]
   };
 
-  var LOCAL_PLACES = {
+  var EXTRA_LOCAL_PLACES = {
     "d1-hotel-checkin-hk": { label: "숙소", text: "香港港岛海逸君绰酒店\n香港北角油街23号", query: "香港港岛海逸君绰酒店 北角油街23号", city: "香港" },
     "d1-dinner-northpoint": { label: "저녁 후보", text: "Fisholic\nGood Luck Dai Pai Dong", query: "Fisholic Fortress Hill Hong Kong", city: "香港" },
     "d1-promenade": { label: "관람 장소", text: "尖沙咀海滨长廊", query: "尖沙咀海滨长廊", city: "香港" },
@@ -816,6 +818,31 @@
     "d6-free-time-elements": { label: "자유 일정", text: "圆方商场 ELEMENTS\n白鹭湖 潮州菜\nLE-TA-SU", query: "圆方商场 ELEMENTS 香港", city: "香港" },
     "d6-airport-move": { label: "공항", text: "香港国际机场", query: "香港国际机场", city: "香港" }
   };
+
+  // EXTRAS is the canonical activity metadata registry used by every renderer.
+  // The source fragments above are retained only to keep each content type
+  // readable; buildExtras validates and joins them under the stable activity ID.
+  function buildExtras(detailMap, photoMap, foodPhotoMap, localPlaceMap) {
+    var validKeys = {};
+    TRIP.days.forEach(function (day) {
+      day.items.forEach(function (item) { validKeys[day.id + "-" + item.id] = true; });
+    });
+
+    var extras = {};
+    function attach(map, field) {
+      Object.keys(map).forEach(function (key) {
+        if (!validKeys[key]) throw new Error("Unknown activity metadata key: " + key);
+        (extras[key] || (extras[key] = {}))[field] = map[key];
+      });
+    }
+    attach(detailMap, "detail");
+    attach(photoMap, "photo");
+    attach(foodPhotoMap, "foodPhotos");
+    attach(localPlaceMap, "place");
+    return extras;
+  }
+
+  var EXTRAS = buildExtras(EXTRA_DETAILS, EXTRA_PHOTOS, EXTRA_FOOD_PHOTOS, EXTRA_LOCAL_PLACES);
 
   var DAY_DATES = { d1: "2026-10-09", d2: "2026-10-10", d3: "2026-10-11", d4: "2026-10-12", d5: "2026-10-13", d6: "2026-10-14" };
   var EMERGENCY = [
@@ -861,8 +888,9 @@
   var fmt = function (n) { return "₩" + n.toLocaleString("ko-KR"); };
 
   function photoHTML(key) {
-    var base = PHOTOS[key];
-    var food = FOOD_PHOTOS[key];
+    var extra = EXTRAS[key] || {};
+    var base = extra.photo;
+    var food = extra.foodPhotos;
     if (!base && !food) return "";
     var photos = [];
     if (base) photos.push(base);
@@ -880,7 +908,7 @@
   function badgeHTML(cls, text) { return '<span class="badge ' + cls + '">' + text + "</span>"; }
 
   function placeToolsHTML(key) {
-    var place = LOCAL_PLACES[key];
+    var place = (EXTRAS[key] || {}).place;
     if (!place) return "";
     var google = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(place.query);
     var amap = "https://uri.amap.com/search?keyword=" + encodeURIComponent(place.query) + "&city=" + encodeURIComponent(place.city) + "&view=map&src=szhk-trip&callnative=1";
@@ -890,11 +918,12 @@
   }
 
   function copyPlace(key, btn) {
-    var text = LOCAL_PLACES[key].text;
+    var place = EXTRAS[key].place;
+    var text = place.text;
     function done() {
       btn.textContent = "복사 완료";
       document.getElementById("globalStatus").textContent = "현지어 장소명을 복사했습니다.";
-      setTimeout(function () { btn.textContent = LOCAL_PLACES[key].label + " 중문 복사"; }, 1800);
+      setTimeout(function () { btn.textContent = place.label + " 중문 복사"; }, 1800);
     }
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(done).catch(function () { fallbackCopy(text, done); });
@@ -952,14 +981,14 @@
     } else if (d.mapPoints && d.mapPoints.length >= 2) {
       h += mapEmbedHTML(d.mapPoints);
     }
-    if (Object.keys(DETAILS).some(function (key) { return key.indexOf(d.id + "-") === 0; })) {
+    if (Object.keys(EXTRAS).some(function (key) { return key.indexOf(d.id + "-") === 0 && EXTRAS[key].detail; })) {
       h += '<div class="day-tools screen-only"><button class="utility-btn expand-all" type="button">상세 모두 펼치기</button><button class="utility-btn collapse-all" type="button">상세 모두 숨기기</button></div>';
     }
     var state = scheduleState(d);
     h += '<ul class="tl">';
     d.items.forEach(function (it, i) {
       var key = d.id + "-" + it.id;
-      var detail = DETAILS[key];
+      var detail = (EXTRAS[key] || {}).detail;
       var detailId = "detail-" + key;
       var stateClass = i === state.current ? " current" : i === state.next ? " next" : "";
       var stateBadge = i === state.current ? '<span class="schedule-state current">현재</span>' : i === state.next ? '<span class="schedule-state next">다음</span>' : "";
